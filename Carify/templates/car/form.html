@@ -1,0 +1,1480 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Vehicle Pre-Delivery Inspection Report</title>
+    <link rel="stylesheet" href="{% static 'css/form-style.css'%}" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
+      integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    />
+  </head>
+  <body>
+    <!-- 1 page -->
+    <div class="container">
+      <img
+        src="https://www.carify.co.in/assets/logo-B22FtGFY.png"
+        alt="Carify Logo"
+        class="logo"
+      />
+
+      <div class="title">
+        <span class="highlight">VEHICLE PRE-DELIVERY</span><br />
+        <span class="sub-highlight">INSPECTION REPORT</span>
+      </div>
+
+      <div>
+        <div class="red-bar"></div>
+        <img
+          src="https://www.varunmaruti.com/uploads/products/colors/grandvitara-midnight-black1.png"
+          alt="Car Image"
+          class="vehicle-image"
+        />
+      </div>
+
+      <div class="info">
+        {% if not form_submitted %}
+        <form
+          method="post"
+          enctype="multipart/form-data"
+          action="{% url 'form_customer' %}"
+        >
+          {% csrf_token %}
+          <div class="customer-name-info">
+            <h4>Customer Information</h4>
+                  {{ form.non_field_errors }}
+
+            <div>
+              <span class="label"><strong>Customer Name:</strong></span>
+              <span class="customer-name"
+                ><input type="text" placeholder="Enter name" id="name" name="name"
+              /></span>
+            </div>
+            <div>
+              <span class="label"><strong>Customer Email:</strong></span>
+              <span class="customer-name"
+                ><input type="email" placeholder="Enter email" id="email" name="email"
+              /></span>
+            </div>
+            <div>
+              <span class="label"><strong>Mobile Nomber:</strong></span>
+              <span class="customer-name"
+                ><input type="number" placeholder="Enter nomber" id="phone" name="phone"
+              /></span>
+            </div>
+
+            <button id="btn">Submit</button>
+          </div>
+        </form>
+        {% else %}
+          <div style="color: green;">Customer Form submitted successfully!</div>
+        {% endif %}
+        <!-- 2 page -->
+        <div class="container">
+          <div class="grand-vitara">
+            <form
+              method="post"
+              enctype="multipart/form-data"
+              action="{% url 'form_vehicle' %}"
+              >  
+              {% csrf_token %}
+              <div class="details-grid">
+              <div>
+                <span class="info">Model:</span>
+                <input type="text" placeholder="Grand Vitara" name="model" />
+              </div>
+            </div>
+
+            <div class="img-box">
+              <h3>Customer name: {{customer.name}}</h3>
+          
+              <div class="car-image">
+                <input type="file" id="carImageInput" accept="image/*" name="image"/>
+                <div class="gallery-preview" id="galleryPreview"></div>
+              </div>
+              <div class="tag-box">
+                <input type="text" placeholder="102 Bhp" name="bhp" />
+                <input type="text" placeholder="6 Airbags" name="airbags" />
+                <input type="text" placeholder="21.11 Mileage (kmpl)" name="mileage_kmpl"/>
+                <input type="text" placeholder="NA NCAP" name="ncap_rating"/>
+              </div>
+            </div>
+            <div class="header">
+              <p>
+                PDI Report<br /><small
+                  >PDI Date:
+                  <td id="date-cell">
+                    {% if vehicle %}
+                      {% if vehicle.inspection_date %}
+                        {{ vehicle.inspection_date }}
+                      {% else %}
+                        No inspection date set
+                      {% endif %}
+                    {% else %}
+                      Submit vehicle form 
+                    {% endif %}
+                  </td>
+                    <br />Conducted By:
+                  {{ request.user.get_full_name }}
+                        <input type="hidden" name="inspected_by" value="{{ request.user.id }}" />
+
+                </small>
+              </p>
+            </div>
+          </div>
+
+          <div class="section">
+            <h3>Vehicle Health Score</h3>
+            <div class="score">
+              Health Score <input type="number" placeholder="4.8" name="health_score"/>
+            </div>
+   
+            <div class="details-grid">
+              <div>
+                <span class="info">VIN:</span>
+                <input type="text" placeholder="MBJTYKL1SSD320128 (Apr-2025)" name="vin" />
+              </div>
+              <div>
+                <span class="info">Fuel Type:</span>
+
+                <select name="fuel_type" id="fuelDropdown">
+                  {% for fuel in fuel_types %}
+                    <option value="{{ fuel.id }}"
+                      {% if form.instance.fuel_type and form.instance.fuel_type.id == fuel.id %}
+                        selected
+                      {% endif %}
+                    >{{ fuel.name }}</option>
+                  {% endfor %}
+                  <option value="__custom__">Other...</option>
+                </select>
+
+                <input type="text" name="custom_fuel" id="customFuelInput"
+                      placeholder="Enter new fuel type"
+                      style="display: none; margin-top: 5px;" />
+              </div>
+
+              <!-- Transmission -->
+              <div>
+                <span class="info">Transmission:</span>
+                <select name="transmission" id="transmissionDropdown">
+                  {% for t in transmission_types %}
+                    <option value="{{ t.id }}"
+                      {% if form.instance.transmission and form.instance.transmission.id == t.id %}
+                        selected
+                      {% endif %}
+                    >{{ t.name }}</option>
+                  {% endfor %}
+                  <option value="__custom__">Other...</option>
+                </select>
+                <input type="text" name="custom_transmission" id="customTransmissionInput"
+                      placeholder="Enter new transmission type"
+                      style="display: none; margin-top: 5px;" />
+              </div>
+
+              <div>
+                <span class="info">Engine:</span
+                ><input type="text" placeholder="1462cc" name="engine_cc"/>
+              </div>
+              <!-- Engine Type -->
+              <div>
+                <span class="info">Engine Type:</span>
+                <select name="engine_type" id="engineDropdown">
+                  {% for e in engine_types %}
+                    <option value="{{ e.id }}"
+                      {% if form.instance.engine_type and form.instance.engine_type.id == e.id %}
+                        selected
+                      {% endif %}
+                    >{{ e.name }}</option>
+                  {% endfor %}
+                  <option value="__custom__">Other...</option>
+                </select>
+                <input type="text" name="custom_engine" id="customEngineInput"
+                      placeholder="Enter new engine type"
+                      style="display: none; margin-top: 5px;" />
+              </div>
+              <div>
+                <span class="info">#Keys:</span
+                ><input type="number" placeholder="2" name="num_keys" />
+              </div>
+            </div>
+            <div style="display: flex; justify-content: end; gap: 5px">
+
+            <button id="btn">Next</button>
+  </div>
+          </form>
+          </div>
+
+          <div class="section">
+                        <form
+              method="post"
+              enctype="multipart/form-data"
+              action="{% url 'form_obdreading' %}"
+              >  
+              {% csrf_token %}
+            <h3>Detailed Report of {{vehicle.model}}</h3>
+            <table>
+              <thead>
+                <tr>
+                  <th>Actual Running (Kms)</th>
+                  <th>Pre-Delivery ODO (Kms)</th>
+                  <th>Running & OBD Tampering Difference</th>
+                  <th>Total Calculation ODO (Kms)</th>
+                  <th>No OBD Tampering</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><input type="number" placeholder="25" name="avg_city_running_kms"/></td>
+                  <td><input type="number" placeholder="23" name="pre_delivery_odo_kms"/></td>
+                  <td><input type="number" placeholder="OBD Detected: 23" name="current_odo_kms"/></td>
+                  <td><input type="number" value="27" name="obd_running_kms" /> <small>Kms</small></td>
+                  <td>
+                    <label>
+                      <input type="checkbox" name="obd_tampering" {% if form.instance.obd_tampering %}checked{% endif %}>
+                      Tampering Detected?
+                    </label>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div style="display: flex; justify-content: end; gap: 5px">
+            <button id="btn">Next</button>
+          </div>
+        </form>
+        </div>
+
+        <!-- 3 page -->
+        <section class="top">
+          <h2>
+            What Is Condition Of My Car’s <span>Core Mechanical Areas?</span>
+          </h2>
+          <!-- <p class="status">Status: <span class="ok">All OK</span></p> -->
+
+          
+          <form
+              method="post"
+              enctype="multipart/form-data"
+              action="{% url 'form_systemcheck' %}"
+              >             
+              {% csrf_token %}
+              <button
+              type="button"
+                id="create1"
+                style="
+                  margin-left: 90%;
+                  margin-top: -15px;
+                  height: 30px;
+                  outline: none;
+                  border: 1px solid white;
+                  border-radius: 5px;
+                  color: white;
+                  background-color: green;
+                  font-weight: 600;
+                "
+              >
+                Create <i class="fa-solid fa-plus"></i>
+              </button>
+            <div class="table-wrapper">
+              <table>
+                <thead>
+                  <tr>
+                    <th>System</th>
+                    <th>Status</th>
+                    <th>No. of Issues</th>
+                    <!-- initial row already here -->
+                  </tr>
+                </thead>
+                <tbody id="core">
+                            {% for s in systems %}
+                    <tr>
+                      <td>{{ s.name }}</td>
+
+                      <td>
+                        <div>
+                          <select name="status_{{ s.id }}" class="statusDropdown form-control" data-status-id="{{ s.id }}">
+                            {% for st in statuses %}
+                              <option value="{{ st.id }}"
+                                {% if st.name == "All Okay" %}data-color="green"{% elif st.name == "Not Okay" %}data-color="red"{% endif %}>
+                                {{ st.name }}
+                              </option>
+                            {% endfor %}
+                            <option value="__custom__">Other...</option>
+                          </select>
+
+                          <input type="text" name="custom_status_{{ s.id }}" class="customStatusInput"
+                                placeholder="Enter new status"
+                                style="display: none; margin-top: 5px;" />
+                        </div>
+                      </td>
+
+
+                      <td>
+                        <input type="number" name="number_of_issues_{{ s.id }}" class="issue-input" min="0" value="0" />
+                      </td>
+                    </tr>
+                                {% endfor %}
+                  </tbody>
+                </table>
+                <div style="display: flex; justify-content: end; margin-top: 10px;">
+                  <button type="submit" id="btn" style="color: green;">
+                    Next <i class="fa-solid fa-arrow-right"></i>
+                  </button>
+                </div>
+              </div>
+            </form>
+
+        </section>
+
+
+
+        <!-- Sensor Ecosystem Section -->
+<section>
+  <h2>What Is Condition Of My Car’s <span>Sensor Ecosystem?</span></h2>
+
+  <form method="post" action="{% url 'form_networksystem' %}">
+    {% csrf_token %}
+
+    <button type="button" id="create_network" style="margin-left: 90%; margin-top: -15px; height: 30px; outline: none; border: 1px solid white; border-radius: 5px; color: white; background-color: green; font-weight: 600;">
+      Create <i class="fa-solid fa-plus"></i>
+    </button>
+
+    <div class="table-wrapper">
+      <table>
+        <thead>
+          <tr>
+            <th>Area</th>
+            <th>Status</th>
+            <th>Remark</th>
+          </tr>
+        </thead>
+        <tbody id="sensor">
+          {% for a in areas %}
+          <tr>
+            <td>
+                  {{ a.name }}
+            </td>
+            <td>
+              <select name="status" class="statusDropdown">
+                {% for st in statuses %}
+                  <option value="{{ st.id }}"
+                          {% if st.name == "All Okay" %}data-color="green"{% elif st.name == "Not Okay" %}data-color="red"{% endif %}>
+                    {{ st.name }}
+                  </option>
+                {% endfor %}
+                <option value="__custom__">Other...</option>
+              </select>
+
+              <input type="text" name="custom_status" class="customStatusInput"
+                    plac4eholder="Enter custom status"
+                    style="display: none; margin-top: 5px;" />
+            </td>
+            <td><input type="text" name="remark" class="issue-input" /></td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+
+      <div style="display: flex; justify-content: end; gap: 5px">
+      
+        <button type="submit" style="color: green">
+          Next <i class="fa-solid fa-arrow-right"></i>
+        </button>
+      </div>
+    </div>
+  </form>
+</section>
+
+        <!-- 4 page -->
+
+        <section>
+          <h2>
+            What Is My Car Performance During Idling?
+            <!-- <span class="status">Status: <span class="ok">All OK</span></span> -->
+          </h2>
+          <h3>Part 1: Live Parameters</h3>
+            <form method="post" action="{% url 'form_liveparameters' %}">
+              {% csrf_token %}
+              {% if error %}
+                <div style="color: red; font-weight: bold; margin-bottom: 15px;">
+                  ⚠️ {{ error }}
+                </div>
+              {% endif %}
+
+              <table>
+                <thead>
+                  <tr>
+                    <th>System</th>
+                    <th>Inference <span>(Voltage, Engine State, Inference, Recommendation)</span></th>
+                  </tr>
+                </thead>
+                <tbody id="live-body">
+                  <tr>
+                    <td>
+                      <select name="system" class="systemDropdown">
+                        {% for p in parameters %}
+                          <option value="{{ p.id }}">{{ p.name }}</option>
+                        {% endfor %}
+                        <option value="__custom__">Other...</option>
+                      </select>
+                      <input type="text" name="custom_system" class="customSystemInput" placeholder="Enter custom system" style="display:none;" />
+                    </td>
+                    <td>
+                      <select name="inference" class="inferenceDropdown">
+                        {% for i in inferences %}
+                          <option value="{{ i.id }}">{{ i.voltage }}, {{i.engine_state}}, {{i.interence}}, {{i.recommendation}}</option>
+                        {% endfor %}
+                        <option value="__custom__">Other...</option>
+                      </select>
+                      <input type="text" name="custom_inference" class="customInferenceInput" placeholder="Enter custom inference" style="display:none;" />
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+
+              <div style="display: flex; justify-content: end;">
+            <button style="color: green">
+              Next <i class="fa-solid fa-arrow-right"></i>
+            </button>              </div>
+            </form>
+
+<form method="post" action="{% url 'form_performancecheck' %}">
+  {% csrf_token %}
+  <h3>Part 2: Other Checks</h3>
+
+    <button type="button" id="other-checks" style="margin-left: 90%; margin-top: -15px; height: 30px; outline: none; border: 1px solid white; border-radius: 5px; color: white; background-color: green; font-weight: 600;">
+      Create <i class="fa-solid fa-plus"></i>
+    </button>
+    {% if error %}
+  <div style="color: red; font-weight: bold; margin-bottom: 15px;">
+    ⚠️ {{ error }}
+  </div>
+{% endif %}
+
+  <table id="other-checks-table">
+    <thead>
+      <tr>
+        <th>System</th>
+        <th>Status</th>
+        <th>Recommendation</th>
+      </tr>
+    </thead>
+    <tbody id="other-body">
+      {% for s in performance_systems %}
+      <tr>
+        <td>
+              {{ s.name }}
+          </td>
+<td>
+  <select name="status" class="statusDropdown">
+    {% for st in statuses %}
+      <option value="{{ st.id }}"
+              {% if st.name == "All Okay" %}data-color="green"{% elif st.name == "Not Okay" %}data-color="red"{% endif %}>
+        {{ st.name }}
+      </option>
+    {% endfor %}
+    <option value="__custom__">Other...</option>
+  </select>
+  <input type="text" name="custom_status" class="customStatusInput" placeholder="Enter custom status" style="display: none; margin-top: 5px;" />
+</td>
+
+          <td>
+            <input type="text" name="recommendation" value="NIL" />
+          </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+  </table>
+
+  <div style="display: flex; justify-content: end; gap: 5px">
+            <button style="color: green">
+              Next <i class="fa-solid fa-arrow-right"></i>
+            </button>  </div>
+</form>
+</section>
+
+
+
+       {% comment %} Template Section for Fluid Level {% endcomment %}
+<form method="post" action="{% url 'form_fluidlevel' %}">
+  {% csrf_token %}
+  <section>
+    <h2>
+      How Are The Fluid Levels In My Car?
+      <button type="button" id="fluid-create" style="margin-left: 90%; margin-top: -15px; height: 30px; outline: none; border: 1px solid white; border-radius: 5px; color: white; background-color: green; font-weight: 600;">
+        Create <i class="fa-solid fa-plus"></i>
+      </button>
+    </h2>
+    {% if error %}
+      <div style="color: red; font-weight: bold; margin-bottom: 15px;">
+        {{ error }}
+      </div>
+    {% endif %}
+
+    <table>
+      <thead>
+        <tr>
+          <th>Area</th>
+          <th>Range/Condition</th>
+          <th>Contamination</th>
+          <th>Recommendation</th>
+        </tr>
+      </thead>
+      <tbody id="fluid-body">
+        {% for a in fluid_areas %}
+        <tr>
+          <td>
+              {{ a.name }}
+          </td>
+          <td>
+            <select name="in_range" class="rangeDropdown">
+              {% for r in fluid_ranges %}<option value="{{ r.id }}">{{ r.name }}</option>{% endfor %}
+              <option value="__custom__">Other...</option>
+            </select>
+            <input type="text" name="custom_range" class="customRangeInput" placeholder="Enter custom range" style="display:none;" />
+          </td>
+<td>
+  <select name="contamination" class="statusDropdown">
+    {% for s in statuses %}
+      <option value="{{ s.id }}"
+              {% if s.name == "All Okay" %}data-color="green"{% elif s.name == "Not Okay" %}data-color="red"{% endif %}>
+        {{ s.name }}
+      </option>
+    {% endfor %}
+    <option value="__custom__">Other...</option>
+  </select>
+  <input type="text" name="custom_status" class="customStatusInput" placeholder="Enter custom status" style="display:none; margin-top: 5px;" />
+</td>
+
+          <td><input type="text" name="recommendation" value="NIL" /></td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    <div style="display: flex; justify-content: end; gap: 5px">
+      <button type="submit" style="color: green">
+        Next <i class="fa-solid fa-arrow-right"></i>
+      </button>
+    </div>
+  </section>
+</form>
+        <!-- 5 page -->
+         <form method="POST" action="{% url 'form_tyrecondition' %}">
+          {% csrf_token %}
+        <div class="section">
+          <h3>Remaining Useful Life Of My Tyres</h3>
+
+          <h3>What Is Condition Of Tyres In My Car?</h3>
+          <table>
+            <thead>
+              <tr>
+                <th>Tyre</th>
+                <th>Brand</th>
+                <th>Status</th>
+                <th>Remaining Life (in %)</th>
+              </tr>
+            </thead>
+            <tbody>
+                <tr>
+                  <td>Front Left <input type="hidden" name="position" value="Front Left" /></td>
+                  <td>
+                    <input type="text" name="brand" placeholder="e.g., MRF" />
+                  </td>
+<td>
+  <select name="condition" class="statusDropdown">
+    {% for s in statuses %}
+      <option value="{{ s.id }}"
+              {% if s.name == "All Okay" %}data-color="green"{% elif s.name == "Not Okay" %}data-color="red"{% endif %}>
+        {{ s.name }}
+      </option>
+    {% endfor %}
+    <option value="__custom__">Other...</option>
+  </select>
+
+  <input type="text" name="custom_condition" class="customConditionInput"
+         placeholder="Enter condition" style="display:none; margin-top: 5px;" />
+</td>
+
+                   
+                    <td><input type="number" name="remaining_life_percent" placeholder="e.g. 95.0" step="0.1" /></td>
+
+                </tr>
+                <tr>
+  <td>Front Right <input type="hidden" name="position" value="Front Left" /></td>
+  <td>
+    <input type="text" name="brand" placeholder="e.g., MRF" />
+  </td>
+<td>
+  <select name="condition" class="statusDropdown">
+    {% for s in statuses %}
+      <option value="{{ s.id }}"
+              {% if s.name == "All Okay" %}data-color="green"{% elif s.name == "Not Okay" %}data-color="red"{% endif %}>
+        {{ s.name }}
+      </option>
+    {% endfor %}
+    <option value="__custom__">Other...</option>
+  </select>
+
+  <input type="text" name="custom_condition" class="customConditionInput"
+         placeholder="Enter condition" style="display:none; margin-top: 5px;" />
+</td>
+
+   
+  <td><input type="number" name="remaining_life_percent" placeholder="e.g. 95.0" step="0.1" /></td>
+</tr>
+<tr>
+  <td>Rear Right <input type="hidden" name="position" value="Front Left" /></td>
+  <td>
+    <input type="text" name="brand" placeholder="e.g., MRF" />
+  </td>
+<td>
+  <select name="condition" class="statusDropdown">
+    {% for s in statuses %}
+      <option value="{{ s.id }}"
+              {% if s.name == "All Okay" %}data-color="green"{% elif s.name == "Not Okay" %}data-color="red"{% endif %}>
+        {{ s.name }}
+      </option>
+    {% endfor %}
+    <option value="__custom__">Other...</option>
+  </select>
+
+  <input type="text" name="custom_condition" class="customConditionInput"
+         placeholder="Enter condition" style="display:none; margin-top: 5px;" />
+</td>
+
+   
+    <td><input type="number" name="remaining_life_percent" placeholder="e.g. 95.0" step="0.1" /></td>
+
+ 
+</tr>
+<tr>
+  <td>Rear Left <input type="hidden" name="position" value="Front Left" /></td>
+  <td>
+    <input type="text" name="brand" placeholder="e.g., MRF" />
+  </td>
+<td>
+  <select name="condition" class="statusDropdown">
+    {% for s in statuses %}
+      <option value="{{ s.id }}"
+              {% if s.name == "All Okay" %}data-color="green"{% elif s.name == "Not Okay" %}data-color="red"{% endif %}>
+        {{ s.name }}
+      </option>
+    {% endfor %}
+    <option value="__custom__">Other...</option>
+  </select>
+
+  <input type="text" name="custom_condition" class="customConditionInput"
+         placeholder="Enter condition" style="display:none; margin-top: 5px;" />
+</td>
+
+   
+  <td><input type="number" name="remaining_life_percent" placeholder="e.g. 95.0" step="0.1" /></td>
+</tr>
+<tr>
+  <td>Spare <input type="hidden" name="position" value="Front Left" /></td>
+  <td>
+    <input type="text" name="brand" placeholder="e.g., MRF" />
+  </td>
+<td>
+  <select name="condition" class="statusDropdown">
+    {% for s in statuses %}
+      <option value="{{ s.id }}"
+              {% if s.name == "All Okay" %}data-color="green"{% elif s.name == "Not Okay" %}data-color="red"{% endif %}>
+        {{ s.name }}
+      </option>
+    {% endfor %}
+    <option value="__custom__">Other...</option>
+  </select>
+
+  <input type="text" name="custom_condition" class="customConditionInput"
+         placeholder="Enter condition" style="display:none; margin-top: 5px;" />
+</td>
+
+   
+  <td><input type="number" name="remaining_life_percent" placeholder="e.g. 95.0" step="0.1" /></td>
+</tr>
+
+
+            </tbody>
+          </table>
+          <div style="display: flex; justify-content: end; gap: 5px">
+
+            <button style="color: green">
+              Next <i class="fa-solid fa-arrow-right"></i>
+            </button>
+          </div>
+        </div>
+      </form>
+{% comment %} Paint Finish {% endcomment %}
+      <form method="POST" action="{% url 'form_paintfinish' %}">
+        {% csrf_token %}
+        <div class="section">
+          <h3>
+            What Is The Overall Fit & Finish Of My Car?<span class="status"
+              ></span>
+          </h3>
+          <h4>1. Paint & Finish
+          <button type="button" id="paint-create" style="margin-left: 90%; margin-top: -15px; height: 30px; outline: none; border: 1px solid white; border-radius: 5px; color: white; background-color: green; font-weight: 600;">
+        Create <i class="fa-solid fa-plus"></i>
+      </button></h4>
+      {% if error %}
+  <div style="color: red; font-weight: bold; margin-bottom: 15px;">
+    {{ error }}
+  </div>
+{% endif %}
+
+          <table>
+            <thead>
+              <tr>
+                <th>Area</th>
+                <th>Repainted</th>
+                <th>Condition</th>
+                <th>Action Recommended</th>
+              </tr>
+            </thead>
+                <tbody id="paint-body">
+                  {% for a in paint_areas %}
+                  <tr>
+                    <td>
+                        {{ a.name }}
+                    </td>
+                    <td>
+                      <input type="hidden" name="repainted" value="off">
+                      <label>
+                        <input type="checkbox" name="repainted_{{ forloop.counter0 }}" value="on"> Repainted?
+                      </label>
+                    </td>
+                    
+<td>
+  <select name="condition" class="conditionDropdown">
+    {% for s in statuses %}
+      <option value="{{ s.id }}"
+              {% if s.name == "All Okay" %}data-color="green"{% elif s.name == "Not Okay" %}data-color="red"{% endif %}>
+        {{ s.name }}
+      </option>
+    {% endfor %}
+    <option value="__custom__">Other...</option>
+  </select>
+
+  <input type="text" name="custom_condition" class="customConditionInput" placeholder="Enter custom condition" style="display: none; margin-top: 5px;" />
+</td>
+
+                    <td><input type="text" name="action" value="NIL" /></td>
+                  </tr>
+                  {% endfor %}
+                </tbody>
+          </table>
+          <div style="display: flex; justify-content: end; gap: 5px">
+
+            <button style="color: green">
+              Next <i class="fa-solid fa-arrow-right"></i>
+            </button>
+          </div>
+        </div>
+      </form>
+        <!-- 6 page -->
+{% comment %} flush gap {% endcomment %}
+        <div class="section">
+<h4>2. Flush & Gaps</h4>
+<form method="POST" action="{% url 'form_flushgap' %}">
+  {% csrf_token %}
+    <button type="button" id="Flush-gaps" style="margin-left: 90%; margin-top: -15px; height: 30px; outline: none; border: 1px solid white; border-radius: 5px; color: white; background-color: green; font-weight: 600;">
+      Create <i class="fa-solid fa-plus"></i>
+    </button>
+    {% if error %}
+  <div style="color: red; font-weight: bold; margin-bottom: 15px;">
+    {{ error }}
+  </div>
+{% endif %}
+
+  <table>
+    <thead>
+      <tr>
+        <th>Area</th>
+        <th>Operation</th>
+        <th>Observation: Gaps</th>
+        <th>Action Recommended</th>
+      </tr>
+    </thead>
+    <tbody id="flush-body">
+      <!-- Initial row -->
+      {% for a in flush_areas %}
+      <tr>
+        <td>
+            {{ a.name }}
+        </td>
+        <td>
+          <select name="operation" class="operationDropdown">
+            {% for o in operations %}<option value="{{ o.id }}">{{ o.name }}</option>{% endfor %}
+            <option value="__custom__">Other...</option>
+          </select>
+          <input type="text" name="custom_operation" placeholder="Custom operation" class="customOperationInput" style="display: none;" />
+        </td>
+        <td>
+          <select name="observation">
+            <option value="Yes">Yes</option>
+            <option value="No">No</option>
+          </select>
+        </td>
+        <td><input type="text" name="action" value="NIL" /></td>
+        
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+            <div style="display: flex; justify-content: end; gap: 5px">
+            <button style="color: green">
+              Next <i class="fa-solid fa-arrow-right"></i>
+            </button>
+          </div>
+
+          </div>
+</form>
+{% comment %} rubber form {% endcomment %}
+        <div class="section">
+<form method="POST" action="{%url 'form_rubbercomponent'%}">
+  {% csrf_token %}
+          <h4>3. Critical Rubber Components</h4>
+          <button
+          type="button"
+            id="Critical-Rubber1"
+            style="
+              margin-left: 90%;
+              height: 30px;
+              outline: none;
+              border: 1px solid white;
+              border-radius: 5px;
+              color: white;
+              background-color: green;
+              font-weight: 600;
+            "
+          >
+            Create <i class="fa-solid fa-plus"></i>
+          </button>
+          <table>
+            <thead>
+              <tr>
+                <th>Area</th>
+                <th>Condition</th>
+                <th>Recommendation</th>
+              </tr>
+            </thead>
+            <tbody id="rubber-body">
+              {% for area in rubber_areas %}
+    <tr>
+      <td>
+            {{ area.name }}
+        </td>
+<td>
+  <select name="condition" class="conditionDropdown">
+    {% for status in statuses %}
+      <option value="{{ status.id }}"
+              {% if status.name == "All Okay" %}data-color="green"{% elif status.name == "Not Okay" %}data-color="red"{% endif %}>
+        {{ status.name }}
+      </option>
+    {% endfor %}
+    <option value="__custom__">Other...</option>
+  </select>
+
+  <input type="text" name="custom_condition" class="customConditionInput" placeholder="Enter custom condition" style="display: none; margin-top: 5px;" />
+</td>
+
+      <td><input type="text" name="action" value="NIL" /></td>
+    </tr>
+    {% endfor %}
+  </tbody>
+          </table>
+          <div style="display: flex; justify-content: end; gap: 5px">
+
+            <button style="color: green">
+              Next <i class="fa-solid fa-arrow-right"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+    </form>
+
+        <!-- 7 page -->
+<div class="section">
+  <h3>What Is Condition Of Glass Related Components In My Car?</h3>
+  
+  <form method="POST" action="{%url 'form_glasscomponent'%}">
+    {% csrf_token %}
+        <button type="button" id="Condition-of-class" style="margin-left: 90%; margin-top: -15px; height: 30px; outline: none; border: 1px solid white; border-radius: 5px; color: white; background-color: green; font-weight: 600;">
+      Create <i class="fa-solid fa-plus"></i>
+    </button>
+    <table>
+      <thead>
+        <tr>
+          <th>Area</th>
+          <th>Brand</th>
+          <th>Condition</th>
+          <th>Recommendation</th>
+        </tr>
+      </thead>
+      <tbody id="glass-body">
+        {% for area in glass_areas %}
+        <tr>
+          <td>
+              {{ area.name }}
+            </td>
+            <td><input type="text" name="brand" placeholder="Brand" required></td>
+<td>
+  <select name="condition" class="conditionDropdown">
+    {% for status in statuses %}
+      <option value="{{ status.id }}"
+              {% if status.name == "All Okay" %}data-color="green"{% elif status.name == "Not Okay" %}data-color="red"{% endif %}>
+        {{ status.name }}
+      </option>
+    {% endfor %}
+    <option value="__custom__">Other...</option>
+  </select>
+
+  <input type="text" name="custom_condition" class="customConditionInput"
+         placeholder="Custom Condition" style="display: none; margin-top: 5px;" />
+</td>
+
+            <td><input type="text" name="action" value="NIL" /></td>
+          </tr>
+          {% endfor %}
+      </tbody>
+    </table>
+
+    <div style="display: flex; justify-content: end; gap: 5px">
+ 
+      <button type="submit" style="color: green">
+        Next <i class="fa-solid fa-arrow-right"></i>
+      </button>
+    </div>
+  </form>
+</div>
+
+        <div class="section">
+          <h3>What Is The Condition Of My Car’s Interiors & Upholstery?</h3>
+<form method="POST" action="{%url 'form_interiorcomponent'%}">
+  {% csrf_token %}
+          <h4>
+           
+            <button
+            type="button"
+              id="Floor-Carpets"
+              style="
+                margin-left: 90%;
+                height: 30px;
+                outline: none;
+                border: 1px solid white;
+                border-radius: 5px;
+                color: white;
+                background-color: green;
+                font-weight: 600;
+              "
+            >
+              Create <i class="fa-solid fa-plus"></i>
+            </button>
+          </h4>
+          <table>
+            <thead>
+              <tr>
+                <th>Category</th>
+                <th>Area</th>
+                <th>Present</th>
+                <th>Condition</th>
+                <th>Recommendation</th>
+              </tr>
+            </thead>
+<tbody id="interior-body">
+  <tr>
+<td>
+  <select name="category" class="categoryDropdown">
+    {% for cat in categories %}
+      <option value="{{ cat.id }}">{{ cat.name }}</option>
+    {% endfor %}
+    <option value="__custom__">Other...</option>
+  </select>
+
+  <input type="text" name="custom_category"
+         class="customCategoryInput"
+         placeholder="Custom Category"
+         style="display:none; margin-top: 5px;" />
+</td>
+
+
+  <td>
+    <select name="area" class="areaDropdown">
+      {% for area in areas %}
+        <option value="{{ area.id }}">{{ area.name }}</option>
+      {% endfor %}
+      <option value="__custom__">Other...</option>
+    </select>
+    <input type="text" name="custom_area" class="customAreaInput" placeholder="Custom Area" style="display:none;">
+  </td>
+    <td>
+      <select name="present">
+        <option value="Present">Present</option>
+        <option value="Not Present">Not Present</option>
+      </select>
+    </td>
+<td>
+  <select name="condition" class="conditionDropdown form-select">
+    {% for s in statuses %}
+      <option value="{{ s.id }}" data-name="{{ s.name }}">{{ s.name }}</option>
+    {% endfor %}
+    <option value="__custom__">Other...</option>
+  </select>
+
+  <input type="text" name="custom_condition"
+         class="customInput form-control mt-2"
+         placeholder="Enter custom condition"
+         style="display: none;" />
+</td>
+
+    <td><input type="text" name="recommendation" value="OK"></td>
+  </tr>
+</tbody>
+
+          </table>
+          <div style="display: flex; justify-content: end; gap: 5px">
+
+            <button style="color: green">
+              Next <i class="fa-solid fa-arrow-right"></i>
+            </button>
+          </div>
+        </div>
+      </form>
+
+<form method="POST" action="{% url 'form_documentation' %}">
+  {% csrf_token %}
+  <div class="section">
+    <h3>Are My Vehicle Documentation In Order?</h3>
+    <button type="button" id="Vehicle-Documentation" style="margin-left: 90%; margin-top: -15px; height: 30px; outline: none; border: 1px solid white; border-radius: 5px; color: white; background-color: green; font-weight: 600;">
+      Create <i class="fa-solid fa-plus"></i>
+    </button>
+
+    <table>
+      <thead>
+        <tr>
+          <th>System</th>
+          <th>Status</th>
+          <th>Remark</th>
+        </tr>
+      </thead>
+      <tbody id="doc-body">
+        {% for d in document_types %}
+        <tr>
+          <!-- Pass document id as hidden input -->
+          <td>
+            {{ d.name }}
+            <input type="hidden" name="document_{{ forloop.counter0 }}" value="{{ d.id }}">
+          </td>
+
+          <!-- Status selection -->
+          <td>
+            <select name="status_{{ forloop.counter0 }}" class="conditionDropdown form-select">
+              {% for s in statuses %}
+                <option value="{{ s.id }}" data-name="{{ s.name|lower }}">{{ s.name }}</option>
+              {% endfor %}
+              <option value="__custom__">Other...</option>
+            </select>
+            <input type="text" name="custom_status_{{ forloop.counter0 }}"
+                   class="customInput form-control mt-2"
+                   placeholder="Enter custom status"
+                   style="display: none;" />
+          </td>
+
+          <!-- Remark -->
+          <td>
+            <input type="text" name="remark_{{ forloop.counter0 }}" placeholder="Remark">
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+
+    <div style="display: flex; justify-content: end">
+      <button type="submit" style="color: green; height: 32px; width: 70px">Submit</button>
+    </div>
+  </div>
+
+</form>
+
+
+        <!-- footer -->
+
+        <div class="disclaimer-box">
+          <div class="logo-section">
+            <img
+              src="https://www.carify.co.in/assets/logo-B22FtGFY.png"
+              alt="Carify Logo"
+              class="carify-logo"
+            />
+          </div>
+
+          <div class="disclaimer-section">
+            <h1>Disclaimer :</h1>
+            <ul>
+              <li>
+                All readings provided in this report have been verified through
+                our tools and manual inspections to the best of our knowledge.
+                Please note that readings may vary between different brands and
+                models.
+              </li>
+              <li>
+                This report reflects the vehicle’s condition prior to delivery.
+                No claims or liabilities can be accepted for any issues that
+                arise after the vehicle has been delivered.
+              </li>
+              <li>
+                The inspection is based on a specific set of criteria and may
+                not encompass all potential vehicle issues. Additional checks
+                may be necessary for comprehensive assessment. Carify reserves
+                the right to update or modify inspection protocols and processes
+                without prior notice.
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+    <script src="{% static 'js/form-main.js' %}"></script>
+ <!-- Place JSON + JS at bottom -->
+<script id="systems-data" type="application/json">{{ systems_json|safe }}</script>
+<script id="statuses-data" type="application/json">{{ statuses_json|safe }}</script>
+<script id="areas-data" type="application/json">{{ areas_json|safe }}</script>
+<script id="statuses-data" type="application/json">{{ statuses_json|safe }}</script>
+<script id="parameters-data" type="application/json">{{ parameters_json|safe }}</script>
+<script id="inferences-data" type="application/json">{{ inferences_json|safe }}</script>
+<script id="performance-data" type="application/json">{{ performance_json|safe }}</script>
+<script id="statuses-data" type="application/json">{{ statuses_json|safe }}</script>
+<script id="fluid-areas-data" type="application/json">{{ fluid_areas_json|safe }}</script>
+<script id="fluid-ranges-data" type="application/json">{{ fluid_ranges_json|safe }}</script>
+<script id="statuses-data" type="application/json">{{ statuses_json|safe }}</script>
+<script id="paint-areas-data" type="application/json">{{ paint_areas_json|safe }}</script>
+<script id="statuses-data" type="application/json">{{ statuses_json|safe }}</script>
+<script id="flush-areas-data" type="application/json">{{ flush_areas_json|safe }}</script>
+<script id="operations-data" type="application/json">{{ operations_json|safe }}</script>
+<script id="rubber-areas-data" type="application/json">{{ rubber_areas_json|safe }}</script>
+<script id="statuses-data" type="application/json">{{ statuses_json|safe }}</script>
+<script id="glass-areas-data" type="application/json">{{ glass_areas_json|safe }}</script>
+<script id="statuses-data" type="application/json">{{ statuses_json|safe }}</script>
+<script id="categories-data" type="application/json">{{ categories_json|safe }}</script>
+<script id="areas-data" type="application/json">{{ areas_json|safe }}</script>
+<script id="statuses-data" type="application/json">{{ statuses_json|safe }}</script>
+<script id="doc-types-data" type="application/json">{{ document_types_json|safe }}</script>
+<script id="statuses-data" type="application/json">{{ statuses_json|safe }}</script>
+<script src="{%static 'js/document.js'%}"></script>
+
+<script src="{%static 'js/interior.js'%}"></script>
+<script src="{% static 'js/glass.js' %}"></script>
+<script src="{% static 'js/rubber.js' %}"></script>
+
+<script src="{% static 'js/fluidlevel.js' %}"></script>
+<script src="{% static 'js/paintfinish.js' %}"></script>
+<script src="{% static 'js/otherparameter.js' %}"></script>
+<script src="{%static 'js/liveparameters.js' %}"></script>
+<script src="{%static 'js/networkcheck.js' %}"></script>
+<script src="{% static 'js/systemcheck.js' %}"></script>
+<script src="{% static 'js/flushgap.js' %}"></script>
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    function updateSelectColor(select) {
+      const selectedOption = select.options[select.selectedIndex];
+      const color = selectedOption.getAttribute('data-color');
+
+      if (color === 'green') {
+        select.style.backgroundColor = '#d4edda';
+        select.style.color = '#155724';
+      } else if (color === 'red') {
+        select.style.backgroundColor = '#f8d7da';
+        select.style.color = '#721c24';
+      } else {
+        select.style.backgroundColor = '';
+        select.style.color = '';
+      }
+    }
+
+    document.querySelectorAll('.statusDropdown').forEach(select => {
+      updateSelectColor(select);  // Set initial color
+      select.addEventListener('change', function () {
+        updateSelectColor(this);
+
+        // Toggle custom input
+        const input = this.closest('td').querySelector('.customStatusInput');
+        input.style.display = (this.value === '__custom__') ? 'block' : 'none';
+      });
+    });
+  });
+
+  document.addEventListener('DOMContentLoaded', function () {
+    function applyColor(select) {
+      const selected = select.options[select.selectedIndex];
+      const color = selected.getAttribute('data-color');
+
+      select.style.backgroundColor = '';
+      select.style.color = '';
+
+      if (color === 'green') {
+        select.style.backgroundColor = '#d4edda';  // light green
+        select.style.color = '#155724';            // dark green
+      } else if (color === 'red') {
+        select.style.backgroundColor = '#f8d7da';  // light red
+        select.style.color = '#721c24';            // dark red
+      }
+    }
+
+    document.querySelectorAll('.conditionDropdown').forEach(function (dropdown) {
+      const customInput = dropdown.closest('td').querySelector('.customConditionInput');
+
+      // Initial color and visibility
+      applyColor(dropdown);
+      if (dropdown.value === '__custom__') {
+        customInput.style.display = 'block';
+      }
+
+      dropdown.addEventListener('change', function () {
+        applyColor(this);
+        if (this.value === '__custom__') {
+          customInput.style.display = 'block';
+        } else {
+          customInput.style.display = 'none';
+        }
+      });
+    });
+  });
+
+  document.addEventListener('DOMContentLoaded', function () {
+    document.querySelectorAll('.categoryDropdown').forEach(function (dropdown) {
+      const customInput = dropdown.closest('td').querySelector('.customCategoryInput');
+
+      // Show input if "Other..." is selected initially
+      if (dropdown.value === '__custom__') {
+        customInput.style.display = 'block';
+      }
+
+      dropdown.addEventListener('change', function () {
+        if (this.value === '__custom__') {
+          customInput.style.display = 'block';
+        } else {
+          customInput.style.display = 'none';
+        }
+      });
+    });
+  });
+
+
+  document.addEventListener('DOMContentLoaded', function () {
+    document.querySelectorAll('.conditionDropdown').forEach(function (dropdown) {
+      const td = dropdown.closest('td');
+      const customInput = td.querySelector('.customInput');
+
+      function updateDropdownStyle(value, selectedText) {
+        dropdown.style.color = '';  // Reset color
+
+        if (selectedText === 'All Okay') {
+          dropdown.style.color = 'green';
+        } else if (selectedText === 'Not Okay') {
+          dropdown.style.color = 'red';
+        }
+
+        if (value === '__custom__') {
+          customInput.style.display = 'block';
+        } else {
+          customInput.style.display = 'none';
+        }
+      }
+
+      dropdown.addEventListener('change', function () {
+        const selectedOption = this.options[this.selectedIndex];
+        const selectedValue = this.value;
+        const selectedText = selectedOption.getAttribute('data-name') || selectedOption.text;
+
+        updateDropdownStyle(selectedValue, selectedText);
+      });
+
+      // Initial check (in case pre-selected)
+      const selectedOption = dropdown.options[dropdown.selectedIndex];
+      updateDropdownStyle(dropdown.value, selectedOption.getAttribute('data-name') || selectedOption.text);
+    });
+  });
+
+  document.addEventListener("DOMContentLoaded", function () {
+    document.querySelectorAll(".statusDropdown").forEach(function (dropdown) {
+      const td = dropdown.closest("td");
+      const customInput = td.querySelector(".customStatusInput");
+
+      function updateStyle(value, label) {
+        // Reset
+        dropdown.style.color = '';
+
+        if (label === "All Okay") {
+          dropdown.style.color = "green";
+        } else if (label === "Not Okay") {
+          dropdown.style.color = "red";
+        }
+
+        customInput.style.display = value === "__custom__" ? "block" : "none";
+      }
+
+      dropdown.addEventListener("change", function () {
+        const selectedOption = this.options[this.selectedIndex];
+        const value = selectedOption.value;
+        const label = selectedOption.getAttribute("data-name") || selectedOption.text;
+        updateStyle(value, label);
+      });
+
+      // Initial render check
+      const selectedOption = dropdown.options[dropdown.selectedIndex];
+      updateStyle(selectedOption.value, selectedOption.getAttribute("data-name") || selectedOption.text);
+    });
+  });
+
+  document.addEventListener("DOMContentLoaded", function () {
+    document.querySelectorAll(".statusDropdown").forEach(function (dropdown) {
+      const td = dropdown.closest("td");
+      const customInput = td.querySelector(".customStatusInput");
+
+      function updateStatusUI() {
+        const selectedOption = dropdown.options[dropdown.selectedIndex];
+        const label = selectedOption.getAttribute("data-name") || selectedOption.text;
+
+        // Reset color
+        dropdown.style.color = "";
+
+        // Apply colors
+        if (label.toLowerCase() === "all okay") {
+          dropdown.style.color = "green";
+        } else if (label.toLowerCase() === "not okay") {
+          dropdown.style.color = "red";
+        }
+
+        // Show/hide custom input
+        customInput.style.display = selectedOption.value === "__custom__" ? "block" : "none";
+      }
+
+      // Initial call
+      updateStatusUI();
+
+      // On change
+      dropdown.addEventListener("change", updateStatusUI);
+    });
+  });
+
+  document.addEventListener("DOMContentLoaded", function () {
+    document.querySelectorAll(".statusDropdown").forEach(function (dropdown) {
+      const td = dropdown.closest("td");
+      const customInput = td.querySelector(".customStatusInput");
+
+      function updateStatusUI() {
+        const selectedOption = dropdown.options[dropdown.selectedIndex];
+        const label = selectedOption.getAttribute("data-name") || selectedOption.text;
+
+        // Reset color
+        dropdown.style.color = "";
+
+        // Apply colors
+        if (label.toLowerCase() === "all okay") {
+          dropdown.style.color = "green";
+        } else if (label.toLowerCase() === "not okay") {
+          dropdown.style.color = "red";
+        }
+
+        // Show/hide custom input
+        customInput.style.display = selectedOption.value === "__custom__" ? "block" : "none";
+      }
+
+      // Initial call
+      updateStatusUI();
+
+      // On change
+      dropdown.addEventListener("change", updateStatusUI);
+    });
+  });
+
+document.addEventListener("DOMContentLoaded", function () {
+  document.querySelectorAll(".statusDropdown").forEach(function (dropdown) {
+    const td = dropdown.closest("td");
+    const customInput = td.querySelector(".customStatusInput");
+
+    function updateUI() {
+      const selectedOption = dropdown.options[dropdown.selectedIndex];
+      const label = selectedOption.getAttribute("data-name");
+
+      // Reset styles
+      dropdown.classList.remove("text-success", "text-danger");
+
+      // Apply color based on status name
+      if (label === "all okay") {
+        dropdown.classList.add("text-success");
+      } else if (label === "not okay") {
+        dropdown.classList.add("text-danger");
+      }
+
+      // Toggle custom input
+      if (selectedOption.value === "__custom__") {
+        customInput.style.display = "block";
+      } else {
+        customInput.style.display = "none";
+        customInput.value = "";
+      }
+    }
+
+    // Init
+    updateUI();
+
+    // On change
+    dropdown.addEventListener("change", updateUI);
+  });
+});
+
+document.addEventListener("DOMContentLoaded", function () {
+  document.querySelectorAll(".statusDropdown").forEach(function (dropdown) {
+    const td = dropdown.closest("td");
+    const customInput = td.querySelector(".customStatusInput");
+
+    function updateUI() {
+      const selectedOption = dropdown.options[dropdown.selectedIndex];
+      const label = (selectedOption.getAttribute("data-name") || "").trim().toLowerCase();
+
+      // Reset styles
+      dropdown.style.color = "";
+      dropdown.style.backgroundColor = "";
+
+      // Apply color based on label
+      if (label === "all okay") {
+        dropdown.style.backgroundColor = "#d4edda";
+        dropdown.style.color = "#155724";
+      } else if (label === "not okay") {
+        dropdown.style.backgroundColor = "#f8d7da";
+        dropdown.style.color = "#721c24";
+      }
+
+      // Show or hide custom input
+      if (selectedOption.value === "__custom__") {
+        customInput.style.display = "block";
+      } else {
+        customInput.style.display = "none";
+        customInput.value = "";
+      }
+    }
+
+    // Call once on page load
+    updateUI();
+
+    // Update on change
+    dropdown.addEventListener("change", updateUI);
+  });
+});
+</script>
+
+
+
+
+
+    
+  </body>
+</html>

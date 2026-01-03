@@ -1,0 +1,16 @@
+<form action="{% url 'payment_verify' %}" method="POST">
+  {% csrf_token %}
+  <script src="https://checkout.razorpay.com/v1/checkout.js"
+          data-key="{{ razorpay_key }}"
+          data-amount="{{ amount }}"
+          data-currency="INR"
+          data-order_id="{{ order_id }}"
+          data-buttontext="Pay Now"
+          data-name="Carify"
+          data-description="Vehicle Inspection"
+          data-prefill.name="{{ request.user.get_full_name }}"
+          data-prefill.email="{{ request.user.email }}"
+          data-theme.color="#3399cc">
+  </script>
+  <input type="hidden" name="vehicle_id" value="{{ vehicle.id }}">
+</form>

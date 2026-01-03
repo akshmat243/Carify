@@ -1,0 +1,142 @@
+/* General Layout */
+.page-body {
+  background-color: #f5f5f5;
+  padding-bottom: 2rem;
+}
+
+.page-title h2 {
+  font-size: 2rem;
+  font-weight: 600;
+}
+
+.text-title-gray {
+  color: #6c757d;
+}
+
+/* Card Styling */
+.card {
+  background-color: #fff;
+  border-radius: 0.5rem;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+  transition: 0.3s ease;
+}
+
+.card:hover {
+  transform: translateY(-3px);
+}
+
+.card-header h3 {
+  font-size: 1.3rem;
+  font-weight: 600;
+}
+
+.summary-card h3 {
+  font-size: 1rem;
+  color: #333;
+}
+
+.summary-card h4 {
+  font-size: 1.4rem;
+}
+
+/* Progress Bars */
+.progress {
+  background-color: #e9ecef;
+  border-radius: 20px;
+}
+
+.progress-bar {
+  transition: width 0.6s ease;
+}
+
+/* Table Styling */
+.table th {
+  background-color: #f8f9fa;
+  color: #343a40;
+  font-weight: 600;
+}
+
+.table td {
+  vertical-align: middle;
+}
+
+/* Action Icons */
+.bx-edit, .bx-trash, .bx-check-circle {
+  font-size: 1.25rem;
+  cursor: pointer;
+}
+
+.bx-edit:hover {
+  color: #ffc107;
+}
+
+.bx-trash:hover {
+  color: #dc3545;
+}
+
+.bx-check-circle:hover {
+  color: #28a745;
+}
+
+/* Button Customization */
+.btn-warning {
+  background-color: #ffc107;
+  color: #000;
+}
+
+.btn-success {
+  background-color: #28a745;
+  color: #fff;
+}
+
+.btn:hover {
+  opacity: 0.85;
+}
+
+/* Dashboard Icons */
+.fa-2xl {
+  font-size: 2rem !important;
+}
+
+.bg-light-primary {
+  background-color: #e3f2fd;
+  padding: 10px;
+  border-radius: 10px;
+}
+
+.bg-light-secondary {
+  background-color: #e2e3e5;
+  padding: 10px;
+  border-radius: 10px;
+}
+
+.bg-light-warning {
+  background-color: #fff3cd;
+  padding: 10px;
+  border-radius: 10px;
+}
+
+/* Utilities */
+.text-start {
+  text-align: left;
+}
+
+.text-center {
+  text-align: center;
+}
+
+.d-flex {
+  display: flex;
+}
+
+.gap-2 {
+  gap: 0.5rem;
+}
+
+.gap-3 {
+  gap: 1rem;
+}
+
+.mt-4 {
+  margin-top: 1.5rem;
+}

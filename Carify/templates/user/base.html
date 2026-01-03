@@ -1,0 +1,264 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Carify</title>
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@400;600;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Lobster&display=swap" rel="stylesheet" />
+
+  <!-- CSS Files -->
+  <link rel="stylesheet" href="{% static 'assests/css/vendors/bootstrap.css' %}" />
+  <link rel="stylesheet" href="{% static 'assests/css/fontawesome-min.css' %}" />
+  <link rel="stylesheet" href="{% static 'assests/css/themify.css' %}" />
+  <link rel="stylesheet" href="{% static 'assests/css/vendors/slick.css' %}" />
+  <link rel="stylesheet" href="{% static 'assests/css/vendors/slick-theme.css' %}" />
+  <link rel="stylesheet" href="{% static 'assests/css/vendors/animate.css' %}" />
+  <link rel="stylesheet" href="{% static 'assests/css/bulk-style.css' %}" />
+  <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet" />
+  <link rel="stylesheet" href="{% static 'css/admin-dash.css' %}" />
+  <link rel="stylesheet" href="{% static 'css/profile.css' %}" />
+
+  <!-- JS Scripts in Head -->
+  <script src="https://kit.fontawesome.com/99a870abbd.js" crossorigin="anonymous"></script>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  {% block extra_css %}{% endblock %}
+
+
+</head>
+<body>
+
+  <!-- Header -->
+<header class="landing-header" >
+  <div class="container-fluid p-0">
+    <div class="row align-items-center m-0">
+      <div class="col-12 p-0">
+        <nav class="navbar navbar-expand-lg navbar-light p-0" style="height: auto;">
+          <div class="container-fluid px-3 py-2" >
+
+             <a class="navbar-brand" href="#">
+            </a>
+
+           
+            <div style="flex-grow: 1; position: relative; height: 150%;">
+             
+
+              <div style="position: absolute; top: 0; left: 0; width: 106%; height: 100%; background-color:whitesmoke; z-index: 0;"></div>
+
+              <div class="d-flex justify-content-between align-items-center w-100 py-2 " style="position: relative; z-index: 1; color: #052d47;">
+                <div class="d-flex align-items-center">
+                  <!-- Sidebar Toggle Button -->
+                  <img src="{% static 'images/carify-logo.png' %}" alt="Logo" id="logo" style="height: 6vh;">
+                  <button id="toggleSidebar" class="btn p-0 me-2" style="color: #052d47; margin-top:15px;">
+                    <i class="fa fa-bars fa-lg"></i>
+                  </button>
+
+                  <!-- Logo -->
+                </div>       
+         <h2 class="m-0 text-primary-blue text-center flex-grow-1 ">  {{ page_title|default:"Dashboard" }} </h2>
+                
+                <!-- Profile dropdown start -->
+                <div class="dropdown ms-3">
+                                   <a class="d-flex align-items-center text-white text-decoration-none dropdown-toggle" href="#" id="profileDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                  
+                  <!-- Profile Image -->
+                  <img src="{% if request.user.profile_picture %}{{ request.user.profile_picture.url }}{% else %}{% static 'images/default-image.jpg' %}{% endif %}"
+                      alt="Profile Picture"
+                      class="rounded-circle me-2"
+                      width="32" height="32"
+                      style="object-fit: cover; border: 2px solid white;">
+
+                  <span style="color:black;">{{ request.user.first_name }}</span>
+                </a>
+                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="profileDropdown">
+                  <li><a class="dropdown-item" href="{% url 'profile' %}">My Profile</a></li>
+                  <li><hr class="dropdown-divider"></li>
+                  <li><a class="dropdown-item" href="{% url 'apply_leave' %}">Apply Leave</a></li>
+                  <li><hr class="dropdown-divider"></li>
+                  <li><a class="dropdown-item" href="{% url 'logout' %}">Logout</a></li>
+                </ul>
+                </div>
+                <!-- Profile dropdown end -->
+
+              </div>
+            </div>
+          </div>
+        </nav>
+      </div>
+    </div>
+  </div>
+</header>
+
+  <!-- Page Layout -->
+  <div class="page-wrapper">
+      <!-- Sidebar Toggle Button -->
+
+<aside class="page-sidebar" id="sidebar" style="background-color: whitesmoke; position: relative;">
+
+  
+
+
+          <ul class="sidebar-menu pt-3" id="simple-bar">
+            {% if request.user.is_authenticated and not request.user.is_verified_by_admin and not request.user.is_staff %}
+              <li class="sidebar-list {% if request.resolver_match.url_name == 'profile' %}active{% endif %}">
+                <a class="sidebar-link d-flex align-items-center" href="{% url 'profile' %}">
+                  <i class="fa-solid fa-id-card" style="color: #052d47; padding-left:15px;"></i>
+                  <span class="label-text">My Profile</span>
+                </a>
+              </li>
+            {% endif %}
+
+
+            {% if request.user.is_authenticated %}
+            {% if request.user.is_verified_by_admin %}
+
+          <li class="sidebar-list {% if request.resolver_match.url_name == 'admin_dashboard' %}active{% endif %}">
+            <a class="sidebar-link d-flex align-items-center" href="{% url 'admin_dashboard' %}">
+              <i class="fa-solid fa-house fa-lg" style="color: #052d47; padding-left:15px;"></i>
+              <span class="label-text">Dashboard</span>
+            </a>
+          </li>
+            {% endif %}
+            {% if request.user.is_authenticated %}
+            <li class="sidebar-list dropdown {% if request.resolver_match.url_name in 'user_dashboard roles_dashboard' %}open active{% endif %}">
+              <a href="#" class="sidebar-link d-flex align-items-center toggle-dropdown">
+                <i class="fa-solid fa-users fa-lg" style="color: #052d47; padding-left:15px;"></i>
+                <span class="label-text">User Management</span>
+              </a>
+              <ul class="sidebar-submenu">
+                <li><a href="{%url 'user_dashboard'%}" class="sidebar-link d-flex align-items-center {% if request.resolver_match.url_name == 'user_dashboard' %}active{% endif %}"><i class="fa-solid fa-user"></i> <span>User</span></a></li>
+                {% if request.user.is_superuser %}
+                <li><a href="{%url 'roles_dashboard'%}" class="sidebar-link d-flex align-items-center {% if request.resolver_match.url_name == 'roles_dashboard' %}active{% endif %}"><i class="fa-solid fa-user-tie"></i> <span>Roles</span></a></li>
+                {% endif %}
+              </ul>
+            </li>
+            {% endif %}
+             {% if request.user.is_authenticated %}
+            <li class="sidebar-list dropdown {% if request.resolver_match.url_name in 'engineer manage_leaves login_hours' %}open active{% endif %}">
+              <a href="#" class="sidebar-link d-flex align-items-center toggle-dropdown">
+                <i class="fa-solid fa-users-gear" style="color: #052d47; padding-left:15px;"></i>
+                <span class="label-text">HRM</span>
+              </a>
+              <ul class="sidebar-submenu">
+                <li><a href="{%url 'engineer'%}" class="sidebar-link d-flex align-items-center {% if request.resolver_match.url_name == 'engineer' %}active{% endif %}"><i class="fa-solid fa-helmet-safety fa-xs"></i> <span>Engineer</span></a></li>
+                <li><a href="{%url 'manage_leaves'%}" class="sidebar-link d-flex align-items-center {% if request.resolver_match.url_name == 'manage_leaves' %}active{% endif %}"><i class="fa-solid fa-calendar-xmark"></i> <span>Leaves</span></a></li>
+              </ul>
+            </li>
+            {% endif %}
+            {% if request.user.is_authenticated %}
+            {% if request.user.is_staff or request.user.is_verified_by_admin%}
+            <li class="sidebar-list dropdown {% if request.resolver_match.url_name in 'vehicles_inspected vehicles_inspected_by_user' %}open active{% endif %}">
+              <a href="#" class="sidebar-link d-flex align-items-center toggle-dropdown">
+                <i class="fa-solid fa-car fa-lg" style="color: #052d47; padding-left:15px;"></i>
+                <span class="label-text">Vehcile Details</span>
+              </a>
+              <ul class="sidebar-submenu">
+                <li><a href="{% url 'vehicles_inspected' %}" class="sidebar-link d-flex align-items-center {% if request.resolver_match.url_name == 'vehicles_inspected' %}active{% endif %}"><i class="fa-solid fa-car-side"></i> <span>All Vehciles</span></a></li>
+                {% if request.user.is_verified_by_admin %}
+                <li><a href="{%url 'vehicles_inspected_by_user' user.id %}" class="sidebar-link d-flex align-items-center {% if request.resolver_match.url_name == 'vehicles_inspected_by_user' %}active{% endif %}"><i class="fa-solid fa-user-gear"></i> <span>My Vehciles</span></a></li>
+                {% endif %}
+              </ul>
+            </li>
+            {% endif %}
+            {% endif %}
+
+            {% if request.user.is_authenticated %}
+            {% if request.user.is_verified_by_admin %}
+            <li class="sidebar-list {% if request.resolver_match.url_name == 'form_customer' %}active{% endif %}">
+              <a class="sidebar-link d-flex align-items-center" href="{% url 'form_customer' %}">
+                <i class="fa-solid fa-pencil fa-lg" style="color: #052d47; padding-left:15px;"></i>
+                <span class="label-text">Fill PDI Form</span>
+              </a>
+            </li>
+            {% endif %}
+            {% endif %}
+            {% endif %}
+            
+
+
+          <!-- Add more sidebar items as needed -->
+          {% comment %} <li class="sidebar-list">
+            <a class="sidebar-link" href="#">
+              <i class="fa-solid fa-thumbtack"></i>
+              <h6>Properties</h6><i class="iconly-Arrow-Right-2 icli"></i>
+            </a>
+            <ul class="sidebar-submenu">
+              <li><a href="#">Ecommerce</a></li>
+              <li><a href="#">Education</a></li>
+            </ul>
+          </li> {% endcomment %}
+        </ul>
+      </aside>
+
+    <!-- Main Content -->
+        {% block admin %}{% endblock admin %}
+        {% block user %}{% endblock user %}
+        {% block inspected_by_user %}{% endblock inspected_by_user %}
+        {% block inspected_cars %}{% endblock inspected_cars %}
+        {% block manage_roles_permissions %}{% endblock %}
+        {% block roles_dashboard %}{% endblock %}
+        {% block assign_roles %}{%endblock%}
+        {% block form %}{% endblock form %}
+        {% block engineer %}{% endblock engineer %}          
+        {% block leave %}{% endblock %}
+        {% block extra_js %}{% endblock %}
+        {% block profile %}{% endblock profile %}
+        {% block leave_form %}{% endblock leave_form %}
+        {% block manage_leaves %}{% endblock manage_leaves %}
+        {% block login_hours %}{% endblock login_hours %}
+        {% block logs %}{% endblock logs %}
+        {% block view_profile %}{% endblock view_profile %}
+
+  </div>
+
+  <!-- JS Files -->
+  <script src="{% static 'assests/js/vendors/jquery/jquery.min.js' %}"></script>
+  <script src="{% static 'assests/js/vendors/bootstrap/dist/js/bootstrap.bundle.min.js' %}"></script>
+  <script src="{% static 'assests/js/font-awesome/fontawesome-min.js' %}"></script>
+  <script src="{% static 'assests/js/tooltip-init.js' %}"></script>
+  <script src="{% static 'assests/js/animation/wow/wow.min.js' %}"></script>
+  <script src="{% static 'assests/js/landing/landing.js' %}"></script>
+  <script src="{% static 'assests/js/slick/slick.min.js' %}"></script>
+  <script src="{% static 'assests/js/slick/slick.js' %}"></script>
+  <script src="{% static 'js/admin.js' %}"></script>
+  <script src="{% static 'js/profile.js' %}"></script>
+
+
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const toggleBtn = document.getElementById('toggleSidebar');
+    const sidebar = document.getElementById('sidebar');
+    const icon = toggleBtn.querySelector('i');
+
+    toggleBtn.addEventListener('click', () => {
+      sidebar.classList.toggle('collapsed');
+      icon.classList.toggle('fa-arrow-left');
+      icon.classList.toggle('fa-arrow-right');
+
+      // Remove open class from dropdowns when sidebar is collapsed
+      if (sidebar.classList.contains('collapsed')) {
+        const dropdowns = sidebar.querySelectorAll('.sidebar-list.dropdown');
+        dropdowns.forEach(item => item.classList.remove('open'));
+      }
+    });
+
+    // Handle dropdown toggle
+    const toggles = document.querySelectorAll('.toggle-dropdown');
+    toggles.forEach(toggle => {
+      toggle.addEventListener('click', function (e) {
+        e.preventDefault();
+        const parent = this.closest('.sidebar-list');
+        parent.classList.toggle('open');
+      });
+    });
+  });
+
+  
+</script>
+</body>
+</html>

@@ -1,0 +1,331 @@
+/* ========================
+   Global Styles
+========================= */
+
+body {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  font-family: 'Nunito Sans', sans-serif;
+  margin: 0;
+  padding: 0;
+  background-color: whitesmoke;
+  overflow-x: hidden;
+  
+}
+
+/* ========================
+   Header Styling
+========================= */
+
+.landing-header {
+  position: fixed;
+  z-index: 10;
+  width: 100%;
+  margin-top: -2vh;
+  /* box-shadow: 0 0 0 1px whitesmoke; */
+}
+
+.landing-header .skewed-bg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 100%;
+  /* background-color: #004777; */
+  transform: skewX(-20deg);
+  transform-origin: bottom left;
+  z-index: -1;
+    
+}
+
+.landing-header .header-content {
+  position: relative;
+  z-index: 1;
+  padding: 1rem 2rem;
+ 
+}
+
+.header-flex {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: relative;
+}
+
+.header-center-title {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  color: #fff;
+  font-size: 1.75rem;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+/* ========================
+   Layout Containers
+========================= */
+
+.page-wrapper {
+  display: flex;
+  flex-grow: 1;
+  flex-direction: row;
+}
+
+.page-sidebar {
+  width: 250px;
+  background-color: whitesmoke;
+  border-right: 1px solid whitesmoke;
+  padding: 20px 0;
+  height: 100vh;
+  position: sticky;
+  top: 10vh;
+}
+
+.page-body-wrapper {
+  flex-grow: 1;
+  padding: 20px;
+  background-color: white;
+}
+
+/* ========================
+   Logo Styling
+========================= */
+
+.navbar-brand img {
+  max-width: 140px;
+}
+
+/* ========================
+   Sidebar Menu Styling
+========================= */
+
+.sidebar-menu {
+  list-style: none;
+  padding-left: 0;
+  margin: 0;
+}
+
+/* Sidebar list layout */
+.sidebar-list {
+  padding: 10px 0;
+  display: block; /* Enables vertical stacking */
+  width: 100%;
+}
+
+/* Sidebar links */
+.sidebar-link {
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+  color: #052d47;
+  padding: 10px 20px;
+  width: 100%;
+}
+
+/* Sidebar link hover effect */
+.sidebar-link:hover {
+  background-color: #f0f0f0;
+  border-radius: 5px;
+}
+
+/* Icon inside sidebar link */
+.sidebar-link i {
+  margin-right: 10px;
+  font-size: 20px;
+  color: #052d47;
+}
+
+/* ========================
+   Summary Card Text
+========================= */
+
+.summary-card h6 {
+  font-size: 14px;
+}
+
+/* ========================
+   Sidebar Collapse Styles
+========================= */
+
+.page-sidebar.collapsed {
+  width: 45px !important;
+}
+
+/* Sidebar toggle button */
+#toggleSidebar {
+  display: flex;
+  align-items: right;
+  justify-content: right;
+  width: 35px;
+  height: 20px;
+  padding: 0;
+  border: none;
+  background: transparent;
+  box-shadow: none;
+  outline: none;
+}
+
+/* Hide text when collapsed */
+.page-sidebar.collapsed .label-text {
+  display: none;
+}
+
+/* Center icons when collapsed */
+.page-sidebar.collapsed .sidebar-link {
+  justify-content: center;
+}
+
+/* Sidebar toggle arrow animation */
+.toggle-sidebar-btn {
+  transition: transform 0.3s ease;
+}
+
+.page-sidebar.collapsed .toggle-sidebar-btn i {
+  transform: rotate(180deg);
+}
+
+/* ========================
+   Sidebar Link Text
+========================= */
+
+.label-text {
+  padding: 2px;
+  color: #000000;
+  transition: color 0.3s ease;
+}
+
+.label-text:hover {
+  color: #052d47;
+  padding: 2px;
+}
+
+/* ========================
+   Submenu Styles
+========================= */
+
+/* Submenu container (hidden by default) */
+.sidebar-submenu {
+  list-style: none;
+  display: none;
+  flex-direction: column;
+  padding-left: 40px;
+  margin-top: 5px;
+}
+
+/* Show submenu when active */
+.sidebar-submenu.show {
+  display: flex;
+}
+
+/* Individual submenu item */
+.sidebar-submenu li {
+  padding: 0px 0;
+}
+
+/* Submenu links */
+.sidebar-submenu li a {
+  text-decoration: none;
+  color: #333;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  padding: 10px 40px;
+}
+
+/* Submenu hover effect */
+.sidebar-submenu li a:hover {
+  color: #004777;
+}
+
+/* When sidebar-list is open, display its submenu */
+.sidebar-list.open .sidebar-submenu {
+  display: flex;
+}
+
+/* Arrow icon beside main link */
+.toggle-icon {
+  margin-left: auto;
+  padding-right: 15px;
+  font-size: 12px;
+  color: #999;
+  transition: transform 0.3s ease;
+}
+
+.sidebar-list.open .toggle-icon {
+  transform: rotate(180deg);
+}
+
+.sidebar-list.active > .sidebar-link,
+.sidebar-submenu .sidebar-link.active {
+  background-color: #f4dcdc;
+  font-weight: 600;
+  border-left: 4px solid #F04C5C;
+  color: #052d47 !important;
+}
+
+
+/* ========== Responsive Sidebar for Mobile/Tablet ========== */
+
+@media (max-width: 425px){
+  #logo{
+    display: none;
+    align-items: left;
+  }
+}
+
+
+@media (max-width: 768px) {
+  .page-wrapper {
+    flex-direction: column;
+  }
+ 
+
+  .page-sidebar {
+    position: absolute;
+    top: 60px; /* below header */
+    left: 0;
+    width: 100%;
+    background-color: whitesmoke;
+    display: none;
+    flex-direction: column;
+    z-index: 999;
+    border-bottom: 1px solid #ccc;
+    animation: dropdown 0.3s ease-in-out forwards;
+  }
+
+  .page-sidebar.active {
+    display: flex;
+  }
+
+  @keyframes dropdown {
+    0% {
+      opacity: 0;
+      transform: translateY(-15px);
+    }
+    100% {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  #mobileToggleBtn {
+    display: flex;
+    justify-content: flex-end;
+    background: transparent;
+    border: none;
+    font-size: 22px;
+    padding: 10px 20px;
+    color: #052d47;
+    cursor: pointer;
+    z-index: 1001;
+  }
+
+  /* Hide full sidebar toggle button */
+  #toggleSidebar {
+    display: none !important;
+  }
+}
+

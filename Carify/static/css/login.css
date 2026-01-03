@@ -1,0 +1,184 @@
+body {
+  margin: 0;
+  font-family: 'Nunito Sans', sans-serif;
+  background: linear-gradient(135deg, #df9c9c, #eba170);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+
+.login-container {
+  display: flex;
+  width: 90%;
+  max-width: 1000px;
+  background-color: #fff;
+  border-radius: 20px;
+  overflow: hidden;
+
+  /* Upgraded shadow */
+  box-shadow: 0 12px 24px rgba(255, 0, 0, 0.2), 
+              0 8px 12px rgba(255, 0, 0, 0.2);
+}
+
+
+.login-left {
+  flex: 1;
+  padding: 40px 50px;
+  background: linear-gradient(135deg, #ffe3e3, #ffe0cb);
+}
+
+.login-title {
+  font-size: 28px;
+  font-weight: bold;
+  margin-bottom: 10px;
+  color: #F04C5C;
+}
+
+.subtitle {
+  color: #e17580;
+  margin-bottom: 30px;
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+}
+
+form label {
+  font-size: 14px;
+  margin-bottom: 5px;
+  color: #F04C5C;
+}
+
+form input {
+  padding: 10px;
+  margin-bottom: 20px;
+  border: 1px solid #e0747f;
+  border-radius: 5px;
+}
+
+.form-options {
+  display: flex;
+  justify-content: space-between;
+  font-size: 14px;
+  margin-bottom: 20px;
+}
+
+.login-btn {
+  background-color:#F04C5C;
+  color: #fff;
+  padding: 12px;
+  font-size: 16px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.login-btn:hover {
+  background-color: #f59595;
+}
+
+.divider {
+  text-align: center;
+  margin: 20px 0;
+  position: relative;
+}
+
+.divider span {
+  background: #f9f9f9;
+  padding: 0 10px;
+  color: #888;
+  position: relative;
+  z-index: 1;
+}
+
+.divider::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  width: 100%;
+  border-top: 1px solid #ccc;
+  left: 0;
+  z-index: 0;
+}
+
+.social-login {
+  display: flex;
+  gap: 10px;
+}
+
+.social-login button {
+  flex: 1;
+  padding: 10px;
+  border: 1px solid #aaa;
+  border-radius: 5px;
+  background: #fff;
+  cursor: pointer;
+}
+
+.signup-text {
+  margin-top: 20px;
+  font-size: 14px;
+  text-align: center;
+  color: #555;
+}
+
+.signup-text a {
+  color: #F4A300;
+  text-decoration: none;
+}
+
+.login-right {
+  flex: 1;
+  background: linear-gradient(135deg, #F04C5C, #e79660);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 40px;
+  color: #fff;
+}
+
+.car-image {
+  width: 70%;
+  max-width: 400px;
+  object-fit: contain;
+}
+
+.car-caption {
+  margin-top: 20px;
+  font-size: 20px;
+  font-weight: 600;
+  text-align: center;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .login-container {
+    flex-direction: column;
+  }
+
+  .login-right {
+    padding: 20px;
+  }
+}
+
+.form-row {
+  display: flex;
+  gap: 1rem; /* space between inputs */
+  margin-bottom: 0rem;
+}
+
+.form-group {
+  flex: 1; /* equally divide space */
+  display: flex;
+  flex-direction: column;
+}
+
+.form-group label {
+  margin-bottom: 0.3rem;
+  font-weight: 600;
+}
+

@@ -1,0 +1,80 @@
+{% extends "user/base.html" %}
+{% block title %}Apply for Leave{% endblock %}
+
+{% block leave_form %}
+<main class="page-body-wrapper">
+  <div class="page-body">
+    <div class="container-fluid">
+
+      <div class="card job-card mt-5">
+        <div class="card-header d-flex justify-content-between align-items-center">
+          <h4 class="mb-0">Apply for Leave</h4>
+        </div>
+        <div class="card-body">
+
+          <form method="post" class="mb-4">
+            {% csrf_token %}
+            <div class="mb-3">
+              <label class="form-label">Start Date</label>
+              <input type="date" name="{{ form.start_date.name }}" min="{{ today }}" class="form-control" required>
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label">End Date</label>
+              <input type="date" name="{{ form.end_date.name }}" min="{{ today }}" class="form-control" required>
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label">Reason</label>
+              <input type="text" name="{{ form.reason.name }}" class="form-control" required>
+            </div>
+
+            <button type="submit" class="btn btn-success">Submit Leave Request</button>
+            <a href="{% url 'profile' %}" class="btn btn-secondary">Cancel</a>
+          </form>
+
+          <h5 class="mt-4">Your Leave Requests</h5>
+          <div class="table-responsive">
+            <table class="table table-bordered table-striped">
+              <thead>
+                <tr>
+                  <th>User</th>
+                  <th>Start</th>
+                  <th>End</th>
+                  <th>Reason</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for leave in leaves %}
+                  <tr>
+                    <td>{{ leave.user.get_full_name }}</td>
+                    <td>{{ leave.start_date }}</td>
+                    <td>{{ leave.end_date }}</td>
+                    <td>{{ leave.reason }}</td>
+                    <td>
+                      {% if leave.status == 'pending' %}
+                        <span class="badge bg-warning text-dark">Pending</span>
+                      {% elif leave.status == 'approved' %}
+                        <span class="badge bg-success">Approved</span>
+                      {% else %}
+                        <span class="badge bg-danger">Rejected</span>
+                      {% endif %}
+                    </td>
+                  </tr>
+                {% empty %}
+                  <tr>
+                    <td colspan="5" class="text-center">No leave requests found.</td>
+                  </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+  </div>
+</main>
+{% endblock %}
