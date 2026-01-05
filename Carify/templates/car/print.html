@@ -1,0 +1,624 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Vehicle Pre-Delivery Inspection Report</title>
+    <link rel="stylesheet" href="{% static 'css/form-style.css'%}" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
+      integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    />
+
+<style>
+  .text-success {
+    color: #28a745;
+    font-weight: 600;
+  }
+
+  .text-danger {
+    color: #dc3545;
+    font-weight: 600;
+  }
+
+  .oval-badge {
+  display: inline-block;
+  background-color: yellow;
+  color: black;
+  padding: 5px 12px;
+  border-radius: 50px;
+  font-weight: bold;
+}
+
+</style>
+
+  </head>
+  <body>
+    <!-- 1 page -->
+    <div class="container">
+      <img
+        src="https://www.carify.co.in/assets/logo-B22FtGFY.png"
+        alt="Carify Logo"
+        class="logo"
+      />
+
+      <div class="title">
+        <span class="highlight">VEHICLE PRE-DELIVERY</span><br />
+        <span class="sub-highlight">INSPECTION REPORT</span>
+      </div>
+
+      <div>
+        <div class="red-bar"></div>
+        <img
+          src="https://www.varunmaruti.com/uploads/products/colors/grandvitara-midnight-black1.png"
+          alt="Car Image"
+          class="vehicle-image"
+        />
+      </div>
+
+      <div class="info">
+
+
+          <div class="customer-name-info">
+            <h4>Customer Information</h4>
+
+            <div>
+              <span class="label"><strong>Customer Name:</strong></span>
+              <span class="customer-name"
+                >{{customer.name}}
+              </span>
+            </div>
+            <div>
+              <span class="label"><strong>Customer Email:</strong></span>
+              <span class="customer-name"
+                >{{customer.email}}
+              </span>
+            </div>
+            <div>
+              <span class="label"><strong>Mobile Nomber:</strong></span>
+              <span class="customer-name"
+                >{{customer.phone}}
+              </span>
+            </div>
+
+          </div>
+
+        <!-- 2 page -->
+        <div class="container">
+          <div class="grand-vitara">
+            <form
+              method="post"
+              enctype="multipart/form-data"
+              action="{% url 'form_vehicle' %}"
+              >  
+           
+              <div class="details-grid">
+              <div>
+                <span class="info">Model:</span>
+                  {{vehicle.model}}
+              </div>
+            </div>
+
+            <div class="img-box">
+          
+              <div class="car-image">
+    <img src="{{ vehicle.image.url }}" alt="Vehicle Image" style="max-width: 400px; height: auto; border: 1px solid #ccc; padding: 5px;">
+                <div class="gallery-preview" id="galleryPreview"></div>
+              </div>
+              <div class="tag-box">
+               <label>BHP {{vehicle.bhp}}</label>
+               <label>Airbags {{vehicle.airbags}}</label>
+               <label>Mileage {{vehicle.mileage_kmpl}}</label>
+               <label>NCAP {{vehicle.ncap_rating}}</label>
+              </div>
+            </div>
+            <div class="header">
+              <p>
+                PDI Report<br /><small
+                  >PDI Date:
+                  <td id="date-cell">
+                    {{vehicle.inspection_date}}
+                  </td>
+                  <br />Conducted By:
+                  {{ request.user.get_full_name }}
+                        <input type="hidden" name="inspected_by" value="{{ request.user.id }}" />
+
+                </small>
+              </p>
+            </div>
+          </div>
+
+          <div class="section">
+            <h3>Vehicle Health Score</h3>
+            <div class="score">
+              Health Score {{vehicle.health_score}}
+            </div>
+   
+            <div class="details-grid">
+              <div>
+                <span class="info">VIN:</span>
+                  {{vehicle.vin}}
+              </div>
+              <div>
+                <span class="info">Fuel Type:</span>
+                  {{vehicle.fuel_type}}
+              </div>
+
+              <!-- Transmission -->
+              <div>
+                <span class="info">Transmission:</span>
+                {{vehicle.transmission}}
+              </div>
+
+              <div>
+                <span class="info">Engine:</span>
+                {{vehicle.engine_cc}}
+              </div>
+              <!-- Engine Type -->
+              <div>
+                <span class="info">Engine Type:</span>
+                {{vehicle.engine_type}}
+              </div>
+              <div>
+                <span class="info">#Keys:</span>
+                {{vehicle.num_keys}}
+              </div>
+            </div>
+            <div style="display: flex; justify-content: end; gap: 5px">
+  </div>
+          </form>
+          </div>
+
+          <div class="section">
+                        <form
+              method="post"
+              enctype="multipart/form-data"
+              action="{% url 'form_obdreading' %}"
+              >  
+              {% csrf_token %}
+            <h3>Detailed Report of {{vehicle.model}}</h3>
+            <table>
+              <thead>
+                <tr>
+                  <th>Actual Running (Kms)</th>
+                  <th>Pre-Delivery ODO (Kms)</th>
+                  <th>Running & OBD Tampering Difference</th>
+                  <th>Total Calculation ODO (Kms)</th>
+                  <th>No OBD Tampering</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>{{obd.avg_city_running_kms}}</td>
+                  <td>{{obd.pre_delivery_odo_kms}}</td>
+                  <td>{{obd.current_odo_kms}}</td>
+                  <td>{{obd.obd_running_kms}}</td>
+                  <td>{{obd.obd_tampering}}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div style="display: flex; justify-content: end; gap: 5px">
+          </div>
+        </form>
+        </div>
+
+        <!-- 3 page -->
+        <section class="top">
+          <h2>
+            What Is Condition Of My Car’s <span>Core Mechanical Areas?</span>
+          </h2>
+          <!-- <p class="status">Status: <span class="ok">All OK</span></p> -->
+            <div class="table-wrapper">
+              <table>
+                <thead>
+                  <tr>
+                    <th>System</th>
+                    <th>Status</th>
+                    <th>No. of Issues</th>
+                  </tr>
+                </thead>
+                <tbody id="core">
+                  <!-- initial row already here -->
+                   {% for s in system_checks %}
+                   <tr>
+                     <td>
+                       {{s.system}}
+                    </td>
+                    <td class="{% if s.status.name|lower == 'all okay' %}text-success{% elif s.status.name|lower == 'not okay' %}text-danger{% endif %}">
+                      {{ s.status.name }}
+                    </td>
+                      <td>  <span class="oval-badge">{{ s.number_of_issues }}</span>
+                      </td>
+                  </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+            </div>
+        </section>
+
+
+
+        <!-- Sensor Ecosystem Section -->
+<section>
+  <h2>What Is Condition Of My Car’s <span>Sensor Ecosystem?</span></h2>
+   <div class="table-wrapper">
+      <table>
+        <thead>
+          <tr>
+            <th>Area</th>
+            <th>Status</th>
+            <th>Remark</th>
+          </tr>
+        </thead>
+        <tbody id="sensor">
+          {% for n in network_systems %}
+          <tr>
+            <td>{{n.area}}</td>
+                    <td class="{% if n.status.name|lower == 'all okay' %}text-success{% elif n.status.name|lower == 'not okay' %}text-danger{% endif %}">
+                      {{ n.status.name }}
+                    </td>   
+                             <td><span class="oval-badge">{{n.remark}}</span></td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+</section>
+
+        <!-- 4 page -->
+
+        <section>
+          <h2>
+            What Is My Car Performance During Idling?
+            <!-- <span class="status">Status: <span class="ok">All OK</span></span> -->
+          </h2>
+          <h3>Part 1: Live Parameters</h3>
+              <table>
+                <thead>
+                  <tr>
+                    <th>System</th>
+                    <th>Inference <span>(Voltage, Engine State, Inference, Recommendation)</span></th>
+                  </tr>
+                </thead>
+                <tbody id="live-body">
+                  {% for v in live_parameters %}
+                  <tr>
+                    <td>{{v.system}}</td>
+                    <td><span class="oval-badge">{{v.interence}}</span></td>
+                  </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+
+             
+
+
+
+  <h3>Part 2: Other Checks</h3>
+
+  <table id="other-checks-table">
+    <thead>
+      <tr>
+        <th>System</th>
+        <th>Status</th>
+        <th>Recommendation</th>
+      </tr>
+    </thead>
+    <tbody id="other-body">
+      {% for pc in performance_checks %}
+      <tr>
+        <td>{{pc.system}}</td>
+                    <td class="{% if pc.status.name|lower == 'all okay' %}text-success{% elif pc.status.name|lower == 'not okay' %}text-danger{% endif %}">
+                      {{ pc.status.name }}
+                    </td>
+                            <td><span class="oval-badge">{{pc.recommendation}}</span></td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</section>
+
+
+
+       {% comment %} Template Section for Fluid Level {% endcomment %}
+  <section>
+    <h2>
+      How Are The Fluid Levels In My Car?
+    </h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Area</th>
+          <th>Range/Condition</th>
+          <th>Contamination</th>
+          <th>Recommendation</th>
+        </tr>
+      </thead>
+      <tbody id="fluid-body">
+        {% for f in fluid_levels %}
+        <tr>
+          <td>{{f.area}}</td>
+          <td>{{f.in_range}}</td>
+                    <td class="{% if f.contamination.name|lower == 'all okay' %}text-success{% elif f.contamination.name|lower == 'not okay' %}text-danger{% endif %}">
+                      {{ f.contamination.name }}
+                    </td>          
+                    <td><span class="oval-badge">{{f.recommendation}}</span></td>
+
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </section>
+        <!-- 5 page -->
+
+        <div class="section">
+          <h3>Remaining Useful Life Of My Tyres</h3>
+
+          <h3>What Is Condition Of Tyres In My Car?</h3>
+          <table>
+            <thead>
+              <tr>
+                <th>Tyre</th>
+                <th>Brand</th>
+                <th>Status</th>
+                <th>Remaining Life (in %)</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for t in tyre_conditions %}
+                <tr>
+                  <td>{{t.position}}</td>
+                  <td>{{t.brand}}</td>
+                    <td class="{% if t.condition.name|lower == 'all okay' %}text-success{% elif t.condition.name|lower == 'not okay' %}text-danger{% endif %}">
+                      {{ t.condition.name }}
+                    </td>            
+                          <td><span class="oval-badge">{{t.remaining_life_percent}}</span></td>
+                  </tr>
+               {% endfor %}
+            </tbody>
+          </table>
+        </div>
+{% comment %} Paint Finish {% endcomment %}
+        <div class="section">
+          <h3>
+            What Is The Overall Fit & Finish Of My Car?<span class="status"
+              ></span>
+          </h3>
+          <h4>1. Paint & Finish</h4>
+          <table>
+            <thead>
+              <tr>
+                <th>Area</th>
+                <th>Repainted</th>
+                <th>Condition</th>
+                <th>Action Recommended</th>
+              </tr>
+            </thead>
+                <tbody id="paint-body">
+                  {% for p in paint_finishes %}
+                  <tr>
+                    <td>{{p.area}}</td>
+                    <td>{{p.repainted}}</td>
+                    <td class="{% if p.condition.name|lower == 'all okay' %}text-success{% elif p.condition.name|lower == 'not okay' %}text-danger{% endif %}">
+                      {{ p.condition.name }}
+                    </td>            
+                    <td><span class="oval-badge">{{p.action}}</span></td>
+                  </tr>
+                  {% endfor %}
+                </tbody>
+          </table>
+        </div>
+        <!-- 6 page -->
+{% comment %} flush gap {% endcomment %}
+<div class="section">
+<h4>2. Flush & Gaps</h4>
+  <table>
+    <thead>
+      <tr>
+        <th>Area</th>
+        <th>Operation</th>
+        <th>Observation: Gaps</th>
+        <th>Action Recommended</th>
+      </tr>
+    </thead>
+    <tbody id="flush-body">
+      <!-- Initial row -->
+       {% for fg in flush_gaps %}
+       <tr>
+         <td>{{fg.area}}</td>
+         <td>{{fg.operation}}</td>
+         <td>{{fg.observation_gap}}</td>
+         <td><span class="oval-badge">{{fg.action}}</span></td>
+        </tr>
+        {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% comment %} rubber form {% endcomment %}
+        <div class="section">
+
+          <h4>3. Critical Rubber Components</h4>
+          <table>
+            <thead>
+              <tr>
+                <th>Area</th>
+                <th>Condition</th>
+                <th>Recommendation</th>
+              </tr>
+            </thead>
+            <tbody id="rubber-body">
+              {% for rc in rubber_components %}
+    <tr>
+      <td>{{rc.area}}</td>
+                    <td class="{% if rc.condition.name|lower == 'all okay' %}text-success{% elif rc.condition.name|lower == 'not okay' %}text-danger{% endif %}">
+                      {{ rc.condition.name }}
+                    </td>            
+                           <td><span class="oval-badge">{{rc.recommendation}}</span></td>
+    </tr>
+    {% endfor %}
+  </tbody>
+          </table>
+          </div>
+      </div>
+
+        <!-- 7 page -->
+<div class="section">
+  <h3>What Is Condition Of Glass Related Components In My Car?</h3>
+      <table>
+      <thead>
+        <tr>
+          <th>Area</th>
+          <th>Brand</th>
+          <th>Condition</th>
+          <th>Recommendation</th>
+        </tr>
+      </thead>
+      <tbody id="glass-body">
+        {% for gc in glass_components %}
+        <tr>
+          <td>{{gc.area}}</td>
+          <td>{{gc.brand}}</td>
+                    <td class="{% if gc.condition.name|lower == 'all okay' %}text-success{% elif gc.condition.name|lower == 'not okay' %}text-danger{% endif %}">
+                      {{ gc.condition.name }}
+                    </td>            
+     <td><span class="oval-badge">{{gc.recommendation}}</span></td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+</div>
+
+        <div class="section">
+          <h3>What Is The Condition Of My Car’s Interiors & Upholstery?</h3>
+          <table>
+            <thead>
+              <tr>
+                <th>Category</th>
+                <th>Area</th>
+                <th>Condition</th>
+                <th>Recommendation</th>
+              </tr>
+            </thead>
+<tbody id="interior-body">
+  {% for ic in interior_components %}
+  <tr>
+    <td>{{ic.category}}</td>
+    <td>{{ic.area}}</td>
+                    <td class="{% if ic.condition.name|lower == 'all okay' %}text-success{% elif ic.condition.name|lower == 'not okay' %}text-danger{% endif %}">
+                      {{ ic.condition.name }}
+                    </td>            
+   <td><span class="oval-badge">{{ic.recommendation}}</span></td>
+  </tr>
+  {% endfor %}
+</tbody>
+          </table>
+        </div>
+
+<div class="section">
+  <h3>Are My Vehicle Documentation In Order?</h3>
+  <table>
+    <thead>
+      <tr>
+        <th>System</th>
+        <th>Status</th>
+        <th>Remark</th>
+      </tr>
+    </thead>
+    <tbody id="doc-body">
+      {% for doc in documentations %}
+      <tr>
+        <td>{{doc.document}}</td>
+                    <td class="{% if doc.status.name|lower == 'all okay' %}text-success{% elif doc.status.name|lower == 'not okay' %}text-danger{% endif %}">
+                      {{ doc.status.name }}
+                    </td>            
+                          <td><span class="oval-badge">{{doc.remark}}</span></td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+        <!-- footer -->
+        <div class="disclaimer-box">
+          <div class="logo-section">
+            <img
+              src="https://www.carify.co.in/assets/logo-B22FtGFY.png"
+              alt="Carify Logo"
+              class="carify-logo"
+            />
+          </div>
+
+          <div class="disclaimer-section">
+            <h1>Disclaimer :</h1>
+            <ul>
+              <li>
+                All readings provided in this report have been verified through
+                our tools and manual inspections to the best of our knowledge.
+                Please note that readings may vary between different brands and
+                models.
+              </li>
+              <li>
+                This report reflects the vehicle’s condition prior to delivery.
+                No claims or liabilities can be accepted for any issues that
+                arise after the vehicle has been delivered.
+              </li>
+              <li>
+                The inspection is based on a specific set of criteria and may
+                not encompass all potential vehicle issues. Additional checks
+                may be necessary for comprehensive assessment. Carify reserves
+                the right to update or modify inspection protocols and processes
+                without prior notice.
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+    <script src="{% static 'js/form-main.js' %}"></script>
+ <!-- Place JSON + JS at bottom -->
+<script id="systems-data" type="application/json">{{ systems_json|safe }}</script>
+<script id="statuses-data" type="application/json">{{ statuses_json|safe }}</script>
+<script id="areas-data" type="application/json">{{ areas_json|safe }}</script>
+<script id="statuses-data" type="application/json">{{ statuses_json|safe }}</script>
+<script id="parameters-data" type="application/json">{{ parameters_json|safe }}</script>
+<script id="inferences-data" type="application/json">{{ inferences_json|safe }}</script>
+<script id="performance-data" type="application/json">{{ performance_json|safe }}</script>
+<script id="statuses-data" type="application/json">{{ statuses_json|safe }}</script>
+<script id="fluid-areas-data" type="application/json">{{ fluid_areas_json|safe }}</script>
+<script id="fluid-ranges-data" type="application/json">{{ fluid_ranges_json|safe }}</script>
+<script id="statuses-data" type="application/json">{{ statuses_json|safe }}</script>
+<script id="paint-areas-data" type="application/json">{{ paint_areas_json|safe }}</script>
+<script id="statuses-data" type="application/json">{{ statuses_json|safe }}</script>
+<script id="flush-areas-data" type="application/json">{{ flush_areas_json|safe }}</script>
+<script id="operations-data" type="application/json">{{ operations_json|safe }}</script>
+<script id="rubber-areas-data" type="application/json">{{ rubber_areas_json|safe }}</script>
+<script id="statuses-data" type="application/json">{{ statuses_json|safe }}</script>
+<script id="glass-areas-data" type="application/json">{{ glass_areas_json|safe }}</script>
+<script id="statuses-data" type="application/json">{{ statuses_json|safe }}</script>
+<script id="categories-data" type="application/json">{{ categories_json|safe }}</script>
+<script id="areas-data" type="application/json">{{ areas_json|safe }}</script>
+<script id="statuses-data" type="application/json">{{ statuses_json|safe }}</script>
+<script id="doc-types-data" type="application/json">{{ document_types_json|safe }}</script>
+<script id="statuses-data" type="application/json">{{ statuses_json|safe }}</script>
+<script src="{%static 'js/document.js'%}"></script>
+
+<script src="{%static 'js/interior.js'%}"></script>
+<script src="{% static 'js/glass.js' %}"></script>
+<script src="{% static 'js/rubber.js' %}"></script>
+
+<script src="{% static 'js/fluidlevel.js' %}"></script>
+<script src="{% static 'js/paintfinish.js' %}"></script>
+<script src="{% static 'js/otherparameter.js' %}"></script>
+<script src="{%static 'js/liveparameters.js' %}"></script>
+<script src="{%static 'js/networkcheck.js' %}"></script>
+<script src="{% static 'js/systemcheck.js' %}"></script>
+<script src="{% static 'js/flushgap.js' %}"></script>
+
+    
+  </body>
+</html>

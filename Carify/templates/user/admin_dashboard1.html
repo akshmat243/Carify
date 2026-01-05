@@ -1,0 +1,39 @@
+{% extends "user/base.html" %}
+{% load static %}
+{% block admin %}
+<!-- Main Content -->
+<main class="page-body-wrapper">
+  <div class="page-body">
+    <div class="container-fluid mt-5 ">
+
+          <div class="row">  <!-- 🔧 Add this row wrapper -->
+            {% for card in dashboard_cards %}
+            <div class="col-lg-3 col-md-6 col-sm-6 col-12 mb-4">
+              <div class="card welcome-banner h-100">
+                <div class="card-body pt-3 summary-card text-center">
+                  <div class="summary-progressbar">
+                    <div class="d-flex align-items-center justify-content-between mb-3">
+                      <i class="fa-solid {{ card.icon }} fa-lg" style="color: #052d47;"></i>
+                      <h6 class="mb-1 text-start">{{ card.label }}</h6>
+                      <h6 class="fw-bold text-dark mb-0">{{ card.value }}</h6>
+                    </div>
+                    <div class="progress sm-progress-bar" style="height: 8px;">
+                      <div class="progress-bar bg-secondary"
+                        role="progressbar"
+                        style="width: {{ card.width }}%;"
+                        aria-valuenow="{{ card.width }}"
+                        aria-valuemin="0"
+                        aria-valuemax="100"></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            {% endfor %}
+          </div> <!-- End row -->
+
+
+    </div> <!-- End container-fluid -->
+  </div> <!-- End page-body -->
+</main>
+{% endblock admin %}

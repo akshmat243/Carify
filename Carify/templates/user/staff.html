@@ -1,0 +1,59 @@
+{% extends "user/base.html" %}
+{% block engineer %} 
+    <main class="page-body-wrapper">
+      <div class="page-body">
+        <div class="container-fluid">         
+          <div class="card job-card mt-5">
+            <div class="card-header d-flex justify-content-between align-items-center">
+              <h4 class="mb-0">Manage Engineer</h4>
+            </div>
+            <div class="card-body">
+              <form method="GET" class="mb-3">
+                <div class="input-group w-50">
+                  <input type="text" name="search" class="form-control" placeholder="Search by email" value="{{ request.GET.search }}">
+                  <button class="btn btn-outline-primary" type="submit">Search</button>
+                </div>
+              </form>
+              <div class="table-responsive">
+                <table class="table table-striped table-bordered">
+                  <thead class="thead-light">
+                    <tr>
+                      <th>Engineer Name</th>
+                      <th>Email</th>
+                      <th>Vehicles Inspected</th>
+                      <th>Status</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {% for user in engineers %}
+                    <tr>
+                      <td>{{ user.get_full_name }}</td>
+                      <td>{{ user.email }} </td>
+                      <td>{{ user.vehicle_count }}</td>
+                        <td>
+                        {% if user.status == 'active' %}
+                            <span style="background-color: green; color: white; padding: 4px 10px; border-radius: 4px;">Active</span>
+                        {% elif user.status == 'non-active' %}
+                            <span style="background-color: black; color: white; padding: 4px 10px; border-radius: 4px;">In-active</span>
+                        {% elif user.status == 'engaged' %}
+                            <span style="background-color: orange; color: white; padding: 4px 10px; border-radius: 4px;">Engaged</span>
+                        {% endif %}
+                        </td>
+
+                         
+                    </tr>
+                    {% empty %}
+                    <tr>
+                      <td colspan="5" class="text-center">No vehicles found.</td>
+                    </tr>
+                    {% endfor %}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+
+          {% endblock %}

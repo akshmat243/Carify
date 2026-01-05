@@ -1,0 +1,68 @@
+{% extends "user/base.html" %}
+{% load static %}
+
+{% block manage_roles_permissions %}
+<div class="container mt-5">
+  <h2>Create Roles & Permissions</h2>
+
+  <!-- Role Form -->
+  <form method="post" class="mb-4">
+    {% csrf_token %}
+    <div class="card mb-3">
+      <div class="card-header"><h4>New Role</h4></div>
+      <div class="card-body">
+        {{ role_form.as_p }}
+        <button type="submit" name="create_role" class="btn btn-primary">Add Role</button>
+      </div>
+    </div>
+  </form>
+
+  <!-- Permission Form -->
+  <form method="post" class="mb-4">
+    {% csrf_token %}
+    <div class="card mb-3">
+      <div class="card-header"><h4>New Permission</h4></div>
+      <div class="card-body">
+        {{ permission_form.as_p }}
+        <button type="submit" name="create_permission" class="btn btn-success">Add Permission</button>
+      </div>
+    </div>
+  </form>
+
+ 
+
+  <hr>
+
+  <!-- Display Roles and Permissions -->
+  <div class="row">
+    <div class="col-md-6">
+      <h3>Roles</h3>
+      <ul class="list-group">
+        {% for role in roles %}
+          <li class="list-group-item">
+            <strong>{{ role.name }}</strong>
+            {% if role.permissions.all %}
+              <ul class="mt-2">
+                {% for perm in role.permissions.all %}
+                  <li>• {{ perm.name }}</li>
+                {% endfor %}
+              </ul>
+            {% else %}
+              <small class="text-muted">No permissions assigned</small>
+            {% endif %}
+          </li>
+        {% endfor %}
+      </ul>
+    </div>
+
+    <div class="col-md-6">
+      <h3>Permissions</h3>
+      <ul class="list-group">
+        {% for permission in permissions %}
+          <li class="list-group-item">• {{ permission.name }}</li>
+        {% endfor %}
+      </ul>
+    </div>
+  </div>
+</div>
+{% endblock %}

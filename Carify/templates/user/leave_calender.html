@@ -1,0 +1,51 @@
+{% extends "user/base.html" %}
+{% load static %}
+
+
+{% block extra_css %}
+  <link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.css" rel="stylesheet">
+  <style>
+    #calendar {
+      max-width: 1000px;
+      margin: 30px auto;
+      padding: 20px;
+      background: #ffffff;
+      border: 1px solid #fff;
+      border-radius: 5px;
+    }
+  </style>
+{% endblock %}
+
+{% block leave %}
+<h2 style="text-align: center;">Calendar</h2>
+
+<!-- Scrollable Calendar Container -->
+<div id="calendar" class="card job-card mt-5"
+     style="margin-top: 150px; max-height: 500px; overflow-y: hidden; padding: 20px;">
+  <!-- Your calendar content goes here -->
+</div>
+{% endblock %}
+
+{% block extra_js %}
+  <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      const calendarEl = document.getElementById('calendar');
+
+      const calendar = new FullCalendar.Calendar(calendarEl, {
+        initialView: 'dayGridMonth',
+        headerToolbar: {
+          left: 'prev,next today',
+          center: 'title',
+          right: 'dayGridMonth,listMonth'
+        },
+        events: '{% url "leave_events_json" user.id %}',
+        height: 'auto',
+        nowIndicator: true,
+        eventColor: 'orange',
+      });
+
+      calendar.render();
+    });
+  </script>
+{% endblock %}

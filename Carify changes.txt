@@ -1,0 +1,17 @@
+## User management changes
+----- add row time management in manage user table
+----- Staff management details page.... active(green), non active(black), engaged(orange), add leave calendar for user for future holidays,
+----- add profile section 
+----- login logout time stamp,
+----- add govt id verification, pancard verification, and bank details,
+
+## Vehicle management
+----- add search bar for date filter and vehicle name,
+----- add engineer row in vehicle details,
+add payment for razor pay, also add row for status for payment confirm and transaction id.
+fetch automatically from api bhp, ncap, airbags, mileage 
+systemform system row should be variable, 
+----- remove replacement row from tyre condition
+----- change recommendation to others with input field otherwise NA
+fix print pdf report
+

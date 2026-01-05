@@ -1,0 +1,131 @@
+{% extends "user/base.html" %}
+{% load static %}
+{% block profile %}
+<main class="page-body-wrapper">
+  <div class="page-body">
+    <div class="container-fluid">
+          <div class="card job-card mt-5">
+            <div class="card-header justify-content-between align-items-center">
+            <!-- Step Indicators -->
+        <div class="step-indicator">
+          <div id="step-indicator-1" class="active">1</div>
+          <div id="step-indicator-2">2</div>
+          <div id="step-indicator-3">3</div>
+        </div>
+
+        <form method="post" enctype="multipart/form-data" id="profileForm">
+          {% csrf_token %}
+
+          <!-- Step 1: Personal Info -->
+          <div class="form-step active" id="step-1">
+            <h3>Step 1: Personal Information</h3>
+            <div class="row">
+              <div class="col-md-4 text-center">
+  <!-- Profile image preview -->
+  <div class="mb-3">
+    <div class="profile-pic-wrapper">
+      <img src="{% if user.profile_picture %}{{ user.profile_picture.url }}{% else %}{% static 'images/default-image.jpg' %}{% endif %}" 
+           id="profilePreview" 
+           alt="Profile Picture" 
+           class="profile-pic">
+    </div>
+  </div>
+
+  <!-- Upload button -->
+<div class="mb-3 text-center">
+  <!-- Upload button label -->
+  <label for="id_profile_picture" class="btn btn-primary">
+    <i class="fa fa-upload"></i> Upload New Photo
+  </label>
+
+  <!-- Hidden input field (linked via 'for' above) -->
+  <input type="file" name="profile_picture" id="id_profile_picture" class="d-none" onchange="previewProfilePicture(this)">
+</div></div>
+
+
+              <div class="col-md-8">
+                <div class="form-group">{{ form.first_name.label_tag }}{{ form.first_name }}</div>
+                <div class="form-group">{{ form.last_name.label_tag }}{{ form.last_name }}</div>
+                <div class="form-group">{{ form.email.label_tag }}{{ form.email }}</div>
+                <div class="form-group">{{ form.phone.label_tag }}{{ form.phone }}</div>
+                <div class="form-group">{{ form.date_of_birth.label_tag }}{{ form.date_of_birth }}</div>
+                <div class="form-group">{{ form.gender.label_tag }}{{ form.gender }}</div>
+                <div class="form-group">{{ form.address.label_tag }}{{ form.address }}</div>
+              </div>
+            </div>
+          </div>
+
+<!-- Step 2: Documents -->
+<div class="form-step" id="step-2">
+  <h3>Step 2: Document Verification</h3>
+
+  <!-- Govt ID Number -->
+  
+  <div class="row">
+    <!-- Govt ID Upload -->
+    <div class="col-md-6">
+      <div class="form-group">
+        <div class="form-group">
+          {{ form.govt_id_number.label_tag }}
+          {{ form.govt_id_number }}
+        </div>
+        <label for="id_govt_id_document">Govt ID Document</label>
+        {% if form.instance.govt_id_document %}
+          <div class="text-end mb-2">
+            <a href="{{ form.instance.govt_id_document.url }}" target="_blank" class="btn btn-sm btn-outline-secondary" style="float: left;">View Uploaded</a>
+          </div>
+        {% else %}
+          <input type="file" name="govt_id_document" id="id_govt_id_document" class="form-control">
+        {% endif %}
+      </div>
+    </div>
+
+    <!-- PAN Card Upload -->
+    <div class="col-md-6">
+      <div class="form-group">
+        <!-- Pancard Number -->
+        <div class="form-group">
+          {{ form.pancard_number.label_tag }}
+          {{ form.pancard_number }}
+        </div>
+        <label for="id_pancard_document">PAN Card Document</label>
+        {% if form.instance.pancard_document %}
+          <div class="text-end mb-2">
+            <a href="{{ form.instance.pancard_document.url }}" target="_blank" class="btn btn-sm btn-outline-secondary" style="float: left;">View Uploaded</a>
+          </div>
+        {% else %}
+          <input type="file" name="pancard_document" id="id_pancard_document" class="form-control">
+        {% endif %}
+      </div>
+    </div>
+  </div>
+
+</div>
+
+
+          <!-- Step 3: Bank Info -->
+          <div class="form-step" id="step-3">
+            <h3>Step 3: Bank Details</h3>
+            <div class="form-group">{{ form.bank_name.label_tag }}{{ form.bank_name }}</div>
+            <div class="form-group">{{ form.bank_account_number.label_tag }}{{ form.bank_account_number }}</div>
+            <div class="form-group">{{ form.ifsc_code.label_tag }}{{ form.ifsc_code }}</div>
+            <button type="button" class="btn btn-outline-success mt-2" id="verifyBankBtn">
+              Verify Bank Details
+            </button>
+          </div>
+
+          <!-- Navigation Buttons -->
+          <div class="form-navigation">
+            <button type="button" id="prevBtn">⬅ Previous</button>
+            <button type="button" id="nextBtn">Next ➡</button>
+            <button type="submit" class="d-none" id="submitBtn">Submit</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+</main>
+
+
+{% endblock %}

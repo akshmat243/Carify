@@ -1,0 +1,13 @@
+<h2>Assign Permissions to Role</h2>
+<form method="post">
+  {% csrf_token %}
+  {{ form.as_p }}
+  <button type="submit">Assign</button>
+</form>
+
+<h3>Existing Role-Permission Assignments</h3>
+<ul>
+  {% for rp in assignments %}
+    <li>{{ rp.role.name }} — {{ rp.permission.name }}</li>
+  {% endfor %}
+</ul>

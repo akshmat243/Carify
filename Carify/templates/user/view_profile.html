@@ -1,0 +1,49 @@
+{% extends 'user/base.html' %}
+{% load static %}
+
+{% block view_profile %}
+<main class="page-body-wrapper">
+  <div class="page-body">
+    <div class="container-fluid">
+      <div class="container">
+  
+    <div class="row">
+      <div class="col-md-4 text-center">
+        {% if user_obj.profile_picture %}
+          <img src="{{ user_obj.profile_picture.url }}" class="rounded-circle img-fluid" style="width:150px; height:150px; object-fit:cover;" alt="Profile Picture">
+        {% else %}
+          <img src="{% static 'images/default_profile.png' %}" class="rounded-circle img-fluid" style="width:150px; height:150px; object-fit:cover;" alt="Default">
+        {% endif %}
+      </div>
+      <div class="col-md-8">
+        <p><strong>Name:</strong> {{ user_obj.first_name }} {{ user_obj.last_name }}</p>
+        <p><strong>Email:</strong> {{ user_obj.email }}</p>
+        <p><strong>Phone:</strong> {{ user_obj.phone }}</p>
+        <p><strong>Gender:</strong> {{ user_obj.gender }}</p>
+        <p><strong>DOB:</strong> {{ user_obj.date_of_birth }}</p>
+        <p><strong>Address:</strong> {{ user_obj.address }}</p>
+
+
+        {% if user_obj.govt_id_document %}
+          <p><strong>Govt ID:</strong> <a href="{{ user_obj.govt_id_document.url }}" target="_blank">View</a></p>
+        {% endif %}
+
+        {% if user_obj.pancard_document %}
+          <p><strong>PAN Card:</strong> <a href="{{ user_obj.pancard_document.url }}" target="_blank">View</a></p>
+        {% endif %}
+
+        <p><strong>Bank Account:</strong> {{ user_obj.bank_account_number }}</p>
+        <p><strong>IFSC:</strong> {{ user_obj.ifsc_code }}</p>
+        <p><strong>Bank Name:</strong> {{ user_obj.bank_name }}</p>
+        <a href="{% url 'verify_user' user_obj.id %}" class="btn btn-success mt-3">Verify Engineer</a>
+        <a href="{% url 'user_dashboard'  %}" class="btn btn-danger mt-3">Cancel</a>
+
+      </div>
+  </div>
+</div>
+</div>
+</div>
+</div>
+</main>
+
+{% endblock %}

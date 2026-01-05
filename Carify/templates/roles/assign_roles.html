@@ -1,0 +1,56 @@
+{% extends "user/base.html" %}
+{% block assign_roles %}
+
+<div class="container mt-5">
+  <h2 class="mb-4">Assign Role to {{ selected_user.email }}</h2>
+
+  <!-- Role Assignment Form -->
+  <form method="post" class="mb-4">
+    {% csrf_token %}
+    <div class="card">
+      <div class="card-body">
+        {{ form.as_p }}
+        <button type="submit" class="btn btn-primary">Assign Role</button>
+      </div>
+    </div>
+  </form>
+
+  <!-- Role Assignments Display -->
+  <h3 class="mt-5 mb-3">Current Role Assignments</h3>
+  <div class="table-responsive">
+    <table class="table table-bordered table-striped">
+      <thead class="table-dark">
+        <tr>
+          <th>User</th>
+          <th>Role</th>
+          <th>Permissions (via Role)</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for assignment in assignments %}
+          <tr>
+            <td>{{ assignment.user.email }}</td>
+            <td>{{ assignment.role.name }}</td>
+            <td>
+              {% if assignment.role.permissions.all %}
+                <ul class="mb-0">
+                  {% for perm in assignment.role.permissions.all %}
+                    <li>{{ perm.name }}</li>
+                  {% endfor %}
+                </ul>
+              {% else %}
+                <span class="text-muted">No permissions</span>
+              {% endif %}
+            </td>
+          </tr>
+        {% empty %}
+          <tr>
+            <td colspan="3" class="text-center text-muted">No role assignments yet.</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+{% endblock %}
